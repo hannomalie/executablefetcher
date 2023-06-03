@@ -3,11 +3,26 @@ plugins {
     `java-gradle-plugin`
 }
 
-group = "de.hanno"
-version = "0.0.1-SNAPSHOT"
+allprojects {
+    group = "de.hanno"
+    version = "0.0.1-SNAPSHOT"
 
-repositories {
-    mavenCentral()
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
+}
+
+kotlin {
+    jvmToolchain(8)
+}
+
+dependencies {
+    testImplementation(kotlin("test"))
+    testImplementation("org.assertj:assertj-core:3.24.2")
 }
 
 gradlePlugin {
@@ -17,17 +32,4 @@ gradlePlugin {
             implementationClass = "de.hanno.ExecutableFetcher"
         }
     }
-}
-
-dependencies {
-    testImplementation(kotlin("test"))
-    testImplementation("org.assertj:assertj-core:3.24.2")
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(8)
 }
