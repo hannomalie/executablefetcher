@@ -11,24 +11,20 @@ object BuiltIns {
         override val name = "helm"
         override val fileName = "helm.exe"
 
-        override fun createBaseFolder(
-            parentFolder: File,
-        ): File = resolveBaseFolder(parentFolder).apply { mkdirs() }
-
-        override fun resolveBaseFolder(parentFolder: File) = parentFolder.resolve(name)
+        override fun resolveDownloadUrl(version: String, operatingSystem: String, architecture: String) = expand(
+            "https://get.helm.sh/helm-v{version}-{os}-{arch}.zip",
+            version,
+            operatingSystem,
+            architecture
+        )
 
         override fun resolveExecutableFile(
             parentFolder: File,
-        ) = resolveOsSpecificFolder(resolveBaseFolder(parentFolder)).resolve(fileName)
-
-        override fun resolveDownloadUrl() = expand(
-            "https://get.helm.sh/helm-v{version}-{os}-{arch}.zip",
-            "3.12.0",
-            "windows",
-            "amd64"
-        )
-
-        override fun resolveOsSpecificFolder(baseFolder: File) = baseFolder.resolve("windows-amd64")
+            operatingSystem: String,
+            architecture: String,
+            version: String
+        ): File = resolveVersionFolder(parentFolder, operatingSystem, architecture, version)
+            .resolve("$operatingSystem-$architecture").resolve(fileName)
     }
 }
 

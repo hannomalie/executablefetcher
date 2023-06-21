@@ -11,24 +11,43 @@ import kotlin.test.assertEquals
 
 class DownloaderTest {
 
+    private val helmExecutable = BuiltIns.helm
+
     @Test
-    fun `builtin helm can be downloaded`(@TempDir parentFolder: File) {
-        val helmExecutable = BuiltIns.helm
-
-        helmExecutable.downloadAndProcess(parentFolder)
-
-        helmExecutable.assertVersionCommandCanBeExecuted(parentFolder)
+    fun `builtin helm can resolves version folder properly`(@TempDir parentFolder: File) {
+        val executableFolder = helmExecutable.resolveExecutableFile(parentFolder, "windows", "amd64", "1.2.3").parentFile
+        val relativePathToVersionFolder = executableFolder.absolutePath.replaceFirst(parentFolder.absolutePath, "")
+        assertThat(relativePathToVersionFolder).isEqualTo("""\helm\windows\amd64\1.2.3\windows-amd64""")
     }
 
+    @Test
+    fun `builtin helm can be executed`(@TempDir parentFolder: File) {
+
+        helmExecutable.downloadAndProcess(parentFolder, "windows", "amd64", "3.12.0")
+        helmExecutable.assertVersionCommandCanBeExecuted(parentFolder, "3.12.0")
+    }
+
+    @Test
+    fun `builtin helm can be executed in multiple versions`(@TempDir parentFolder: File) {
+
+        helmExecutable.downloadAndProcess(parentFolder, "windows", "amd64", "3.12.0")
+        helmExecutable.downloadAndProcess(parentFolder, "windows", "amd64", "3.11.3")
+
+        helmExecutable.assertVersionCommandCanBeExecuted(parentFolder, "3.12.0")
+        helmExecutable.assertVersionCommandCanBeExecuted(parentFolder, "3.11.3")
+    }
+
+
     private fun Executable.assertVersionCommandCanBeExecuted(
-        parentFolder: File
+        parentFolder: File,
+        expectedVersion: String
     ) {
         val logFile = parentFolder.resolve("log.txt").apply { createNewFile() }
-        val executable = resolveExecutableFile(parentFolder)
+        val executableFile = resolveExecutableFile(parentFolder, "windows", "amd64", expectedVersion)
 
-        executable.assertExistence()
-        assertEquals(0, executable.execute("version", logFile))
-        assertThat(logFile.readText()).contains("""version.BuildInfo{Version:"v3.12.0"""")
+        executableFile.assertExistence()
+        assertEquals(0, executableFile.execute("version", logFile))
+        assertThat(logFile.readText()).contains("""version.BuildInfo{Version:"v$expectedVersion"""")
     }
 
     private fun File.execute(command: String, logFile: File) =
