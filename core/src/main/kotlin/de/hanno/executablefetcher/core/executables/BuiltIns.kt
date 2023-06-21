@@ -1,6 +1,7 @@
 package de.hanno.executablefetcher.core.executables
 
 import de.hanno.executablefetcher.core.template.expand
+import de.hanno.executablefetcher.core.variant.Variant
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
@@ -11,20 +12,20 @@ object BuiltIns {
         override val name = "helm"
         override val fileName = "helm.exe"
 
-        override fun resolveDownloadUrl(version: String, operatingSystem: String, architecture: String) = expand(
-            "https://get.helm.sh/helm-v{version}-{os}-{arch}.zip",
-            version,
-            operatingSystem,
-            architecture
+        override fun resolveDownloadUrl(
+            variant: Variant
+        ) = "https://get.helm.sh/helm-v{version}-{os}-{arch}.zip".expand(
+            variant.version,
+            variant.operatingSystem,
+            variant.architecture
         )
 
         override fun resolveExecutableFile(
             parentFolder: File,
-            operatingSystem: String,
-            architecture: String,
-            version: String
-        ): File = resolveVersionFolder(parentFolder, operatingSystem, architecture, version)
-            .resolve("$operatingSystem-$architecture").resolve(fileName)
+            variant: Variant,
+        ): File = resolveVersionFolder(parentFolder, variant)
+            .resolve("${variant.operatingSystem}-${variant.architecture}")
+            .resolve(fileName)
     }
 }
 

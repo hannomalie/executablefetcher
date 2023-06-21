@@ -2,14 +2,12 @@ package de.hanno.executablefetcher.core.template
 
 import java.net.URL
 
-fun expand(
-    template: String,
+fun String.expand(
     version: String,
     operatingSystem: String,
     architecture: String
 ) = URL(
-    template
-        .replace("{version}", version)
+    replace("{version}", version)
         .replace("{os}", operatingSystem)
         .replace("{arch}", architecture)
 )

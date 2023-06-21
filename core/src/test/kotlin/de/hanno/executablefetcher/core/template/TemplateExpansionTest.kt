@@ -13,8 +13,7 @@ class TemplateExpansionTest {
 
     @Test
     fun `template expands for all given operating systems`() {
-        val finalUrl: URL = expand(
-            template = template,
+        val finalUrl: URL = template.expand(
             version = version,
             operatingSystem = "windows",
             architecture = architecture,
