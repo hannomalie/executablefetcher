@@ -1,8 +1,11 @@
 package de.hanno.executablefetcher.core.download
 
+import de.hanno.executablefetcher.core.executables.AlreadyCached
 import de.hanno.executablefetcher.core.executables.BuiltIns
+import de.hanno.executablefetcher.core.executables.Downloaded
 import de.hanno.executablefetcher.core.executables.Executable
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -14,7 +17,7 @@ class DownloaderTest {
     private val helmExecutable = BuiltIns.helm
 
     @Test
-    fun `builtin helm can resolves version folder properly`(@TempDir parentFolder: File) {
+    fun `builtin helm resolves version folder properly`(@TempDir parentFolder: File) {
         val executableFolder = helmExecutable.resolveExecutableFile(parentFolder, "windows", "amd64", "1.2.3").parentFile
         val relativePathToVersionFolder = executableFolder.absolutePath.replaceFirst(parentFolder.absolutePath, "")
         assertThat(relativePathToVersionFolder).isEqualTo("""\helm\windows\amd64\1.2.3\windows-amd64""")
@@ -37,6 +40,19 @@ class DownloaderTest {
         helmExecutable.assertVersionCommandCanBeExecuted(parentFolder, "3.11.3")
     }
 
+    @Nested
+    class CachedExecutable {
+
+        private val helmExecutable = BuiltIns.helm
+
+        @Test
+        fun `already downloaded executable is not downloaded again`(@TempDir parentFolder: File) {
+            assertThat(helmExecutable.downloadAndProcess(parentFolder, "windows", "amd64", "3.12.0"))
+                .isInstanceOf(Downloaded::class.java)
+            assertThat(helmExecutable.downloadAndProcess(parentFolder, "windows", "amd64", "3.12.0"))
+                .isInstanceOf(AlreadyCached::class.java)
+        }
+    }
 
     private fun Executable.assertVersionCommandCanBeExecuted(
         parentFolder: File,
