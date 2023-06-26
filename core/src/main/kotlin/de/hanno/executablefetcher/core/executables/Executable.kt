@@ -3,6 +3,7 @@ package de.hanno.executablefetcher.core.executables
 import de.hanno.executablefetcher.core.download.download
 import de.hanno.executablefetcher.core.variant.Variant
 import de.hanno.executablefetcher.core.zip.extractZipFile
+import de.hanno.executablefetcher.os.identifier
 import java.io.File
 import java.net.URL
 
@@ -53,7 +54,7 @@ interface Executable {
         variant: Variant
     ): File = parentFolder
         .resolve(name)
-        .resolve(variant.operatingSystem)
+        .resolve(variant.operatingSystem.identifier)
         .resolve(variant.architecture)
         .resolve(variant.version)
 }

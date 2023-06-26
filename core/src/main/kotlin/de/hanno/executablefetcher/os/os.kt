@@ -22,3 +22,10 @@ sealed interface OperatingSystem {
     object Linux: OperatingSystem
     object Mac: OperatingSystem
 }
+
+val OperatingSystem.identifier: String
+    get() = when(this) {
+        OperatingSystem.Linux -> "linux"
+        OperatingSystem.Mac -> "macos"
+        OperatingSystem.Windows -> "windows"
+    }

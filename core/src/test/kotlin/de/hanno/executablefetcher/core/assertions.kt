@@ -1,5 +1,6 @@
 import de.hanno.executablefetcher.core.executables.Executable
 import de.hanno.executablefetcher.core.variant.Variant
+import de.hanno.executablefetcher.os.OperatingSystem
 import org.assertj.core.api.Assertions
 import java.io.File
 import kotlin.test.assertEquals
@@ -9,7 +10,7 @@ fun Executable.assertVersionCommandCanBeExecuted(
     expectedVersion: String
 ) {
     val variant = Variant(
-        operatingSystem = "windows",
+        operatingSystem = OperatingSystem.Windows,
         architecture = "amd64",
         version = expectedVersion,
     )

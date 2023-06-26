@@ -1,21 +1,22 @@
 package de.hanno.executablefetcher.core.template
 
+import de.hanno.executablefetcher.os.OperatingSystem.Windows
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.net.URL
 
 class TemplateExpansionTest {
 
-    val version = "3.12.0"
-    val architecture = "amd64"
+    private val version = "3.12.0"
+    private val architecture = "amd64"
 
-    val template = "https://get.helm.sh/helm-v{version}-{os}-{arch}.zip"
+    private val template = "https://get.helm.sh/helm-v{version}-{os}-{arch}.zip"
 
     @Test
     fun `template expands for all given operating systems`() {
         val finalUrl: URL = template.expand(
             version = version,
-            operatingSystem = "windows",
+            operatingSystem = Windows,
             architecture = architecture,
         )
 

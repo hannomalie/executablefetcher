@@ -5,6 +5,8 @@ import de.hanno.executablefetcher.core.executables.AlreadyCached
 import de.hanno.executablefetcher.core.executables.Downloaded
 import de.hanno.executablefetcher.core.executables.builtin.helm
 import de.hanno.executablefetcher.core.variant.Variant
+import de.hanno.executablefetcher.os.OperatingSystem
+import de.hanno.executablefetcher.os.OperatingSystem.Windows
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -14,7 +16,7 @@ import java.io.File
 class ExecutableUseCasesTest {
 
     private val variant = Variant(
-        operatingSystem = "windows",
+        operatingSystem = Windows,
         architecture = "amd64",
         version = "1.2.3",
     )
@@ -48,7 +50,7 @@ class ExecutableUseCasesTest {
         @Test
         fun `already downloaded executable is not downloaded again`(@TempDir parentFolder: File) {
             val variant = Variant(
-                operatingSystem = "windows",
+                operatingSystem = Windows,
                 architecture = "amd64",
                 version = "3.12.0",
             )

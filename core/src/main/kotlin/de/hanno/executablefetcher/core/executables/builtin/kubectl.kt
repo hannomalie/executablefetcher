@@ -3,7 +3,6 @@ package de.hanno.executablefetcher.core.executables.builtin
 import de.hanno.executablefetcher.core.executables.Executable
 import de.hanno.executablefetcher.core.template.expand
 import de.hanno.executablefetcher.core.variant.Variant
-import java.io.File
 
 val kubectl = object: Executable {
     override val name = "kubectl"
