@@ -13,8 +13,10 @@ fun URL.download(targetDirectory: File): File? {
 
     return when (con.responseCode) {
         HttpURLConnection.HTTP_OK -> {
-            val targetFile = targetDirectory.resolve(file.removePrefix("/")).apply {
-                runCatching { createNewFile() }.onFailure {
+            val targetFile = targetDirectory.resolve(fileNameWithExtension).apply {
+                runCatching {
+                    createNewFile()
+                }.onFailure {
                     throw IllegalStateException("Can not create file $absolutePath", it)
                 }
             }
@@ -25,9 +27,8 @@ fun URL.download(targetDirectory: File): File? {
             }
             targetFile
         }
-        else -> {
-            // TODO: Consider exception here
-            null
-        }
+        else -> null
     }
 }
+
+private val URL.fileNameWithExtension get() = file.split('/').last()

@@ -22,6 +22,7 @@ interface Executable {
         when(downloadedFile) {
             AlreadyCached -> {}
             is Downloaded -> processDownload(downloadedFile.file, versionFolder)
+            is NotFound -> {}
         }
         return downloadedFile
     }
@@ -33,7 +34,13 @@ interface Executable {
     ): DownloadResult = if(resolveExecutableFile(parentFolder, variant).exists()) {
         AlreadyCached
     } else {
-        Downloaded(resolveDownloadUrl(variant).download(versionFolder)!!)
+        val url = resolveDownloadUrl(variant)
+        val file = url.download(versionFolder)
+        if(file == null) {
+            NotFound(url)
+        } else {
+            Downloaded(file)
+        }
     }
 
     fun resolveExecutableFile(
@@ -54,3 +61,4 @@ interface Executable {
 sealed interface DownloadResult
 object AlreadyCached: DownloadResult
 data class Downloaded(val file: File): DownloadResult
+data class NotFound(val url: URL): DownloadResult
