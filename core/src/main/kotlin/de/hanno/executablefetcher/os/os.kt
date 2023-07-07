@@ -2,18 +2,18 @@ package de.hanno.executablefetcher.os
 
 import java.util.*
 
-// copied from
+// This code is translated from
 // https://mkyong.com/java/how-to-detect-os-in-java-systemgetpropertyosname/
 
 private val osIdentifier = System.getProperty("os.name")
-val currentOS = osIdentifier.determineOperatingSystem()
+val currentOS = osIdentifier.toOperatingSystem()
 
-fun String.determineOperatingSystem(): OperatingSystem? = lowercase(Locale.getDefault()).let {
+fun String.toOperatingSystem(): OperatingSystem = lowercase(Locale.getDefault()).let { value ->
     when {
-        it.contains("win") -> OperatingSystem.Windows
-        it.contains("mac") -> OperatingSystem.Mac
-        it.contains("nix") || it.contains("nux") || it.contains("aix") -> OperatingSystem.Linux
-        else -> null
+        value.contains("win") -> OperatingSystem.Windows
+        value.contains("mac") -> OperatingSystem.Mac
+        value.contains("nix") || value.contains("nux") || value.contains("aix") -> OperatingSystem.Linux
+        else -> OperatingSystem.Unknown(value)
     }
 }
 
@@ -21,11 +21,12 @@ sealed interface OperatingSystem {
     object Windows: OperatingSystem
     object Linux: OperatingSystem
     object Mac: OperatingSystem
+    data class Unknown(val rawIdentifier: String): OperatingSystem
 }
 
-val OperatingSystem.identifier: String
-    get() = when(this) {
-        OperatingSystem.Linux -> "linux"
-        OperatingSystem.Mac -> "macos"
-        OperatingSystem.Windows -> "windows"
-    }
+val OperatingSystem.identifier: String get() = when(this) {
+    OperatingSystem.Linux -> "linux"
+    OperatingSystem.Mac -> "macos"
+    OperatingSystem.Windows -> "windows"
+    is OperatingSystem.Unknown -> rawIdentifier
+}

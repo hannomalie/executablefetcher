@@ -1,11 +1,11 @@
 package de.hanno.executablefetcher
 
-import assertVersionCommandCanBeExecuted
+import de.hanno.executablefetcher.core.assertVersionCommandCanBeExecuted
+import de.hanno.executablefetcher.arch.toArchitecture
 import de.hanno.executablefetcher.core.executables.AlreadyCached
 import de.hanno.executablefetcher.core.executables.Downloaded
 import de.hanno.executablefetcher.core.executables.builtin.helm
 import de.hanno.executablefetcher.core.variant.Variant
-import de.hanno.executablefetcher.os.OperatingSystem
 import de.hanno.executablefetcher.os.OperatingSystem.Windows
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
@@ -17,7 +17,7 @@ class ExecutableUseCasesTest {
 
     private val variant = Variant(
         operatingSystem = Windows,
-        architecture = "amd64",
+        architecture = "amd64".toArchitecture(),
         version = "1.2.3",
     )
 
@@ -51,11 +51,12 @@ class ExecutableUseCasesTest {
         fun `already downloaded executable is not downloaded again`(@TempDir parentFolder: File) {
             val variant = Variant(
                 operatingSystem = Windows,
-                architecture = "amd64",
+                architecture = "amd64".toArchitecture(),
                 version = "3.12.0",
             )
             Assertions.assertThat(helm.downloadAndProcess(parentFolder, variant))
                 .isInstanceOf(Downloaded::class.java)
+
             Assertions.assertThat(helm.downloadAndProcess(parentFolder, variant))
                 .isInstanceOf(AlreadyCached::class.java)
         }

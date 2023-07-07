@@ -22,7 +22,7 @@ class ExecutableFetcherTest {
             TaskOutcome.SUCCESS,
             TaskOutcome.UP_TO_DATE,
         )
-        assertThat(result.output).contains("The following executables are registered:")
+        assertThat(result.output).containsIgnoringWhitespaces("The following executables are registered:\nhelm, kubectl")
     }
 }
 

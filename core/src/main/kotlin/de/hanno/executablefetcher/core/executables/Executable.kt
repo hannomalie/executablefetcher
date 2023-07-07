@@ -1,5 +1,6 @@
 package de.hanno.executablefetcher.core.executables
 
+import de.hanno.executablefetcher.arch.identifier
 import de.hanno.executablefetcher.core.download.download
 import de.hanno.executablefetcher.core.variant.Variant
 import de.hanno.executablefetcher.core.zip.extractZipFile
@@ -55,7 +56,7 @@ interface Executable {
     ): File = parentFolder
         .resolve(name)
         .resolve(variant.operatingSystem.identifier)
-        .resolve(variant.architecture)
+        .resolve(variant.architecture.identifier)
         .resolve(variant.version)
 }
 

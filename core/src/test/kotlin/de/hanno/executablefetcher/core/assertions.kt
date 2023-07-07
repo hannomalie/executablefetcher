@@ -1,3 +1,6 @@
+package de.hanno.executablefetcher.core
+
+import de.hanno.executablefetcher.arch.toArchitecture
 import de.hanno.executablefetcher.core.executables.Executable
 import de.hanno.executablefetcher.core.variant.Variant
 import de.hanno.executablefetcher.os.OperatingSystem
@@ -11,7 +14,7 @@ fun Executable.assertVersionCommandCanBeExecuted(
 ) {
     val variant = Variant(
         operatingSystem = OperatingSystem.Windows,
-        architecture = "amd64",
+        architecture = "amd64".toArchitecture(),
         version = expectedVersion,
     )
     val logFile = parentFolder.resolve("log.txt").apply { createNewFile() }

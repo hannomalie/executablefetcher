@@ -4,9 +4,11 @@ import de.hanno.executablefetcher.core.executables.Executable
 import de.hanno.executablefetcher.core.template.expand
 import de.hanno.executablefetcher.core.variant.Variant
 
-val kubectl = object: Executable {
+object kubectl: Executable {
     override val name = "kubectl"
     override val fileName = "kubectl.exe"
+
+    val defaultVersion = "1.27.3"
 
     override fun resolveDownloadUrl(
         variant: Variant

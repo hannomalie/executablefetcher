@@ -1,5 +1,6 @@
 package de.hanno.executablefetcher.core.template
 
+import de.hanno.executablefetcher.arch.toArchitecture
 import de.hanno.executablefetcher.os.OperatingSystem.Windows
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -8,7 +9,7 @@ import java.net.URL
 class TemplateExpansionTest {
 
     private val version = "3.12.0"
-    private val architecture = "amd64"
+    private val architecture = "amd64".toArchitecture()
 
     private val template = "https://get.helm.sh/helm-v{version}-{os}-{arch}.zip"
 

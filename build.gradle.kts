@@ -21,6 +21,8 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":core"))
+
     testImplementation(kotlin("test"))
     testImplementation("org.assertj:assertj-core:3.24.2")
 }
