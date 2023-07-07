@@ -17,8 +17,8 @@ class ExecutableFetcher: Plugin<Project> {
         val extension = ExecutableFetcherExtension(target.gradle)
         target.extensions.add("executableFetcher", extension)
 
-        target.tasks.register("listExecutables") {
-            it.doLast {
+        target.tasks.register("listExecutables") { task ->
+            task.doLast {
                 println("The following executables are registered:")
                 if(target.gradle.startParameter.logLevel in listOf(LogLevel.INFO, LogLevel.DEBUG)) {
                     extension.executables.forEach { (executableConfig, executable) ->
@@ -29,7 +29,7 @@ class ExecutableFetcher: Plugin<Project> {
                         println("${executableConfig.name} - $executableFile")
                     }
                 } else {
-                    println(extension.executables.keys.joinToString(", ") { it.name })
+                    println(extension.executables.keys.joinToString(", ") { it -> it.name })
                 }
             }
         }
