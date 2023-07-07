@@ -26,12 +26,11 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.assertj:assertj-core:3.24.2")
 }
-
 gradlePlugin {
     plugins {
         create("executableFetcher") {
             id = "de.hanno.executablefetcher"
-            implementationClass = "de.hanno.ExecutableFetcher"
+            implementationClass = "de.hanno.executablefetcher.ExecutableFetcher"
         }
     }
 }

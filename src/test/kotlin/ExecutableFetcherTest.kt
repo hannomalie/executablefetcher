@@ -36,6 +36,34 @@ class ExecutableFetcherTest {
         assertThat(result.output).containsPattern("""kubectl - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\kubectl\\windows\\amd64\\1\.27\.3\\kubectl\.exe""")
     }
 
+    @Test
+    fun `listExecutables gradle task prints custom variants of builtin commands`(@TempDir testProjectDir: File) {
+        assertTrue(testProjectDir.resolve("settings.gradle.kts").createNewFile())
+        testProjectDir.resolve("build.gradle.kts").apply {
+            assertTrue(createNewFile())
+            writeText(
+                """
+                    plugins {
+                        id("de.hanno.executablefetcher")
+                    }
+                    extensions.getByType(de.hanno.executablefetcher.ExecutableFetcherExtension::class.java).apply {
+                        registerExecutable(de.hanno.executablefetcher.core.executables.builtin.helm, "3.11.3")    
+                    }
+                """.trimIndent()
+            )
+        }
+
+        val result = testProjectDir.executeGradle("listExecutables", "--rerun-tasks", "--info")
+
+        assertThat(result.task(":listExecutables")!!.outcome).isIn(
+            TaskOutcome.SUCCESS,
+            TaskOutcome.UP_TO_DATE,
+        )
+        assertThat(result.output).containsIgnoringWhitespaces("The following executables are registered:")
+        assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\windows\\amd64\\3\.12\.0\\windows-amd64\\helm\.exe""")
+        assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\windows\\amd64\\3\.11\.3\\windows-amd64\\helm\.exe""")
+    }
+
     private fun File.executeGradle(
         vararg arguments: String = arrayOf("listExecutables", "--rerun-tasks")
     ) = GradleRunner.create()

@@ -1,4 +1,4 @@
-package de.hanno
+package de.hanno.executablefetcher
 
 import de.hanno.executablefetcher.arch.currentArchitecture
 import de.hanno.executablefetcher.core.executables.Executable
@@ -48,7 +48,7 @@ open class ExecutableFetcherExtension(private val gradle: Gradle) {
     }
     val executables: Map<ExecutableConfig, Executable> by ::_executables
 
-    fun registerExecutable(executable: Executable, version: String, parentFolder: File?) = _executables.put(
+    fun registerExecutable(executable: Executable, version: String, parentFolder: File? = null) = _executables.put(
         ExecutableConfig(executable.name, version, parentFolder ?: this.parentFolder), executable
     )
 }
