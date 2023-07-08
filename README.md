@@ -4,19 +4,45 @@ Lets you retrieve, cache and execute arbitrary variants of executables through G
 
 ## Simple example
 
+### List available executables
 ```kotlin
 plugins {
     id("de.hanno.executablefetcher")
 }
-extensions.getByType(de.hanno.executablefetcher.ExecutableFetcherExtension::class.java).apply {
-    registerExecutable(de.hanno.executablefetcher.core.executables.builtin.helm, "3.11.3")    
+
+executableFetcher {
+    registerExecutable(de.hanno.executablefetcher.core.executables.builtin.helm, "3.11.3")
 }
+
 [...]
 
 
 ./gradlew listExecutables --info
 
 > helm - foo/executablefetcher/helm/windows/amd64/3.12.0/windows-amd64/helm.exe
+> helm - foo/executablefetcher/helm/windows/amd64/3.11.3/windows-amd64/helm.exe
+```
+
+### Execute command
+```kotlin
+plugins {
+    id("de.hanno.executablefetcher")
+}
+
+tasks.named("executeHelm", de.hanno.executablefetcher.ExecuteTask::class.java) {
+    args = "version"
+}
+
+[...]
+
+
+./gradlew executeHelm --info
+
+> [...]
+> :executeHelm (Thread[Execution worker for ':',5,main]) started.
+
+> version.BuildInfo{Version:"v3.11.3", GitCommit:"323249351482b3bbfc9f5004f65d400aa70f9ae7", GitTreeState:"clean", GoVersion:"go1.20.3"}
+
 ```
 
 ## Rationale

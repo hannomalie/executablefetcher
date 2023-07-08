@@ -1,3 +1,5 @@
+package de.hanno.executablefetcher
+
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
@@ -16,7 +18,6 @@ class ExecutableFetcherTest {
 
         assertThat(result.task(":listExecutables")!!.outcome).isIn(
             TaskOutcome.SUCCESS,
-            TaskOutcome.UP_TO_DATE,
         )
         assertThat(result.output).containsIgnoringWhitespaces("The following executables are registered:\nhelm, kubectl")
     }
@@ -29,7 +30,6 @@ class ExecutableFetcherTest {
 
         assertThat(result.task(":listExecutables")!!.outcome).isIn(
             TaskOutcome.SUCCESS,
-            TaskOutcome.UP_TO_DATE,
         )
         assertThat(result.output).containsIgnoringWhitespaces("The following executables are registered:")
         assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\windows\\amd64\\3\.12\.0\\windows-amd64\\helm\.exe""")
@@ -57,15 +57,48 @@ class ExecutableFetcherTest {
 
         assertThat(result.task(":listExecutables")!!.outcome).isIn(
             TaskOutcome.SUCCESS,
-            TaskOutcome.UP_TO_DATE,
         )
         assertThat(result.output).containsIgnoringWhitespaces("The following executables are registered:")
         assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\windows\\amd64\\3\.12\.0\\windows-amd64\\helm\.exe""")
         assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\windows\\amd64\\3\.11\.3\\windows-amd64\\helm\.exe""")
     }
 
+    @Test
+    fun `executeHelm custom task prints helm version`(@TempDir testProjectDir: File) {
+        testProjectDir.apply {
+            assertTrue(resolve("settings.gradle.kts").createNewFile())
+            resolve("build.gradle.kts").apply {
+                assertTrue(createNewFile())
+                writeText(
+                    """
+                plugins {
+                    id("de.hanno.executablefetcher")
+                }
+                executableFetcher {
+                    registerExecutable(de.hanno.executablefetcher.core.executables.builtin.helm, "3.11.3")
+                }
+                
+                tasks.register("executeHelm", de.hanno.executablefetcher.ExecuteTask::class.java) {
+                    group = "executable"
+                    executableName = "helm"
+                    version = "3.11.3"
+                    args = "version"
+                }
+            """.trimIndent()
+                )
+            }
+        }
+
+        val result = testProjectDir.executeGradle("executeHelm")
+
+        assertThat(result.task(":executeHelm")!!.outcome).isIn(
+            TaskOutcome.SUCCESS,
+        )
+        assertThat(result.output).containsIgnoringWhitespaces("""version.BuildInfo{Version:"v3.11.3"""")
+    }
+
     private fun File.executeGradle(
-        vararg arguments: String = arrayOf("listExecutables", "--rerun-tasks")
+        vararg arguments: String = arrayOf("listExecutables")
     ) = GradleRunner.create()
         .withProjectDir(this)
         .withArguments(*arguments)

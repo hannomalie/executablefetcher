@@ -1,26 +1,63 @@
 package de.hanno.executablefetcher
 
 import de.hanno.executablefetcher.arch.currentArchitecture
+import de.hanno.executablefetcher.core.executables.AlreadyCached
+import de.hanno.executablefetcher.core.executables.Downloaded
 import de.hanno.executablefetcher.core.executables.Executable
+import de.hanno.executablefetcher.core.executables.NotFound
 import de.hanno.executablefetcher.core.executables.builtin.helm
 import de.hanno.executablefetcher.core.executables.builtin.kubectl
 import de.hanno.executablefetcher.core.variant.Variant
 import de.hanno.executablefetcher.os.currentOS
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import org.gradle.api.*
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.TaskAction
+import org.gradle.configurationcache.extensions.capitalized
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.util.concurrent.CompletableFuture
+
 
 class ExecutableFetcher: Plugin<Project> {
     override fun apply(target: Project) {
         val extension = ExecutableFetcherExtension(target.gradle)
         target.extensions.add("executableFetcher", extension)
 
-        target.tasks.register("listExecutables") { task ->
+        target.registerListExecutableTask(extension)
+        target.registerExecutableTasks(extension)
+    }
+
+    private fun Project.registerExecutableTasks(extension: ExecutableFetcherExtension) {
+        val executableConfigsGroupedByExecutableName = extension.executables.entries.groupBy { it.key.name }
+
+        executableConfigsGroupedByExecutableName.values.forEach {
+            it.firstOrNull()?.let { (key, _) ->
+                tasks.register("execute${key.name.capitalized()}", ExecuteTask::class.java) { task ->
+                    task.group = "executable"
+                    task.executableName = key.name
+                    task.version = key.version
+                    task.description = "Executes ${key.name} in version ${key.version}. Args can be overridden."
+                }
+            }
+        }
+    }
+
+    private fun Project.registerListExecutableTask(
+        extension: ExecutableFetcherExtension
+    ) {
+        tasks.register("listExecutables") { task ->
+            group = "executable"
+            task.outputs.upToDateWhen { false }
+
             task.doLast {
                 println("The following executables are registered:")
-                if(target.gradle.startParameter.logLevel in listOf(LogLevel.INFO, LogLevel.DEBUG)) {
+                if (gradle.startParameter.logLevel in listOf(LogLevel.INFO, LogLevel.DEBUG)) {
                     extension.executables.forEach { (executableConfig, executable) ->
                         val executableFile = executable.resolveExecutableFile(
                             executableConfig.parentFolder,
@@ -29,10 +66,91 @@ class ExecutableFetcher: Plugin<Project> {
                         println("${executableConfig.name} - $executableFile")
                     }
                 } else {
-                    println(extension.executables.keys.joinToString(", ") { it -> it.name })
+                    println(extension.executables.keys.map { it.name }.distinct().joinToString(", "))
                 }
             }
         }
+    }
+}
+
+open class ExecuteTask: DefaultTask() {
+    @Input
+    lateinit var executableName: String
+
+    @Input
+    var version: String? = null
+
+    @Optional
+    @InputDirectory
+    var parentFolder: File? = null
+
+    @Input
+    var args: String = ""
+
+    init {
+        outputs.upToDateWhen { false }
+    }
+
+    @TaskAction
+    fun execute() {
+        val extension = project.extensions.getByType(ExecutableFetcherExtension::class.java)
+        val executables = extension.executables
+
+        val executableConfig = executables.keys.firstOrNull { it.name == executableName }
+            ?: throw IllegalStateException(
+                "Can't find requested executable '$executableName'. Available: ${executables.map { it.key.name }.distinct().joinToString(", ")}"
+            )
+        val defaultVersion = executableConfig.version
+        val defaultParentFolder = executableConfig.parentFolder
+
+        val resultingParentFolder = parentFolder ?: defaultParentFolder
+        val resultingVersion = version ?: defaultVersion
+        val variant = Variant(currentOS, currentArchitecture, resultingVersion)
+
+        val executable = executables[ExecutableConfig(executableName, resultingVersion, resultingParentFolder)]!!
+        executable.downloadAndProcess(resultingParentFolder, variant).let { result ->
+            when(result) {
+                AlreadyCached -> logger.info("Executable $executableName is already cached")
+                is Downloaded -> logger.info("Downloaded executable $executableName to ${result.file.absolutePath}")
+                is NotFound -> throw IllegalStateException("Cannot download executable $executableName from ${result.url}")
+            }
+        }
+
+        val file = executable.resolveExecutableFile(resultingParentFolder, variant)
+
+        logger.info("Executing '${file.absolutePath} ${args}'")
+        val process = ProcessBuilder().command(file.absolutePath, args).inheritIO().start()
+
+        val stdOutFuture = process.inputStream.readAsync()
+        val stdErrorFuture = process.errorStream.readAsync()
+        stdOutFuture.thenCombine(stdErrorFuture) { stdOut: String, stdErr: String ->
+            project.logger.error(stdErr)
+            println(stdOut)
+        }
+
+        val result = process.waitFor()
+        if(result != 0) {
+            throw IllegalStateException("Execution failed for executable ${file.absolutePath} with args $args")
+        }
+    }
+}
+
+// Code translated from
+// https://stackoverflow.com/questions/14165517/processbuilder-forwarding-stdout-and-stderr-of-started-processes-without-blocki
+fun InputStream.readAsync(): CompletableFuture<String> = CompletableFuture.supplyAsync {
+    try {
+        InputStreamReader(this).use { isr ->
+            BufferedReader(isr).use { br ->
+                val res = StringBuilder()
+                var inputLine: String?
+                while (br.readLine().also { inputLine = it } != null) {
+                    res.append(inputLine).append(System.lineSeparator())
+                }
+                return@supplyAsync res.toString()
+            }
+        }
+    } catch (e: Throwable) {
+        throw RuntimeException("problem with executing program", e)
     }
 }
 
