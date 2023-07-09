@@ -17,14 +17,14 @@ jobs:
         uses: actions/upload-artifact@v3
         if: success() || failure()
         with:
-          name: build-reports
+          name: ubuntu-build-reports
           path: build/reports
           retention-days: 1
       - name: Archive build reports core
         uses: actions/upload-artifact@v3
         if: success() || failure()
         with:
-          name: build-reports-core
+          name: ubuntu-build-reports-core
           path: core/build/reports
           retention-days: 1
   build-on-windows:
@@ -40,13 +40,13 @@ jobs:
         uses: actions/upload-artifact@v3
         if: success() || failure()
         with:
-          name: build-reports
+          name: windows-build-reports
           path: build/reports
           retention-days: 1
       - name: Archive build reports core
         uses: actions/upload-artifact@v3
         if: success() || failure()
         with:
-          name: build-reports-core
+          name: windows-build-reports-core
           path: core/build/reports
           retention-days: 1
