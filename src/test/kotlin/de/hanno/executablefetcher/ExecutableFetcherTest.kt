@@ -77,12 +77,9 @@ class ExecutableFetcherTest {
                 executableFetcher {
                     registerExecutable(de.hanno.executablefetcher.core.executables.builtin.helm, "3.11.3")
                 }
-                
-                tasks.register("executeHelm", de.hanno.executablefetcher.ExecuteTask::class.java) {
-                    group = "executable"
-                    executableName = "helm"
-                    version = "3.11.3"
+                tasks.named("executeHelm", de.hanno.executablefetcher.ExecuteTask::class.java) {
                     args = "version"
+                    version = "3.11.3"
                 }
             """.trimIndent()
                 )
