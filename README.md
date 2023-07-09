@@ -23,7 +23,23 @@ executableFetcher {
 > helm - foo/executablefetcher/helm/windows/amd64/3.11.3/windows-amd64/helm.exe
 ```
 
-### Execute command
+### Execute command ad-hoc
+```kotlin
+plugins {
+    id("de.hanno.executablefetcher")
+}
+
+[...]
+
+./gradlew execute --executable=helm --args=version
+
+> [...]
+> :execute (Thread[Execution worker for ':',5,main]) started.
+
+> version.BuildInfo{Version:"v3.12.0", GitCommit:"c9f554d75773799f72ceef38c51210f1842a1dea", GitTreeState:"clean", GoVersion:"go1.20.3"}
+```
+
+### Execute a prepared command
 ```kotlin
 plugins {
     id("de.hanno.executablefetcher")
@@ -42,8 +58,24 @@ tasks.named("executeHelm", de.hanno.executablefetcher.ExecuteTask::class.java) {
 > :executeHelm (Thread[Execution worker for ':',5,main]) started.
 
 > version.BuildInfo{Version:"v3.11.3", GitCommit:"323249351482b3bbfc9f5004f65d400aa70f9ae7", GitTreeState:"clean", GoVersion:"go1.20.3"}
-
 ```
+
+## Features
+
+* _Builtin executables_: For some executables, there are builtin definitions. That only means that the plugin knows
+  how to download those executables for some operating systems and some architectures. For all builtin executables,
+  there is a default execution Task generated like *executeHelm* or *executeGit* that uses some default version. Take
+  a look at the examples here to find out how to override args and versions.
+* _Operating system independent automation_: Gradle has support for different operating systems. Using it as a gateway
+  to access executables, you can have all your tooling operating system independent, as long as the exe has support for
+  a specific os.
+* _Task for ad hoc execution of a command_: Executes an arbitrary known executable with some provided args.
+* _Custom executables_: The plugin extension provides a way to define custom executables. Here you can also pass in
+  your own implementation of an executable. You only need to provide some names and implement 
+  `fun resolveDownloadUrl(variant: Variant): URL` and benefit from some more or less cool interfaces and types, 
+  automatic downloading, automatic caching etc :)
+* _No dependencies_: This plugin has no runtime library dependencies. That means you won't run into any dependency
+  conflicts on your gradle build classpath (as long as Kotlin's std library remains backwards compatible :P)
 
 ## Rationale
 

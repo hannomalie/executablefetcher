@@ -97,6 +97,30 @@ class ExecutableFetcherTest {
         assertThat(result.output).containsIgnoringWhitespaces("""version.BuildInfo{Version:"v3.11.3"""")
     }
 
+    @Test
+    fun `global executable task prints helm version when used with helm parameter`(@TempDir testProjectDir: File) {
+        testProjectDir.apply {
+            assertTrue(resolve("settings.gradle.kts").createNewFile())
+            resolve("build.gradle.kts").apply {
+                assertTrue(createNewFile())
+                writeText(
+                    """
+                plugins {
+                    id("de.hanno.executablefetcher")
+                }
+            """.trimIndent()
+                )
+            }
+        }
+
+        val result = testProjectDir.executeGradle("execute", "--executable=helm", "--args=version")
+
+        assertThat(result.task(":execute")!!.outcome).isIn(
+            TaskOutcome.SUCCESS,
+        )
+        assertThat(result.output).containsIgnoringWhitespaces("""version.BuildInfo{Version:"v3.12.0"""")
+    }
+
     private fun File.executeGradle(
         vararg arguments: String = arrayOf("listExecutables")
     ) = GradleRunner.create()
