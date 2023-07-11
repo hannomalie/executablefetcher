@@ -30,14 +30,15 @@ class ExecutableFetcherTest {
     fun `listExecutables gradle task prints builtin commands with more info`(@TempDir testProjectDir: File) {
         testProjectDir.createSimpleProject()
 
-        val result = testProjectDir.executeGradle("listExecutables", "--rerun-tasks", "--info")
+        val result = testProjectDir.executeGradle("listExecutables", "--info")
 
         assertThat(result.task(":listExecutables")!!.outcome).isIn(
             TaskOutcome.SUCCESS,
         )
         assertThat(result.output).containsIgnoringWhitespaces("The following executables are registered:")
-        assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\${currentOS.identifier}\\${currentArchitecture.identifier}\\3\.12\.0\\${currentOS.identifier}-${currentArchitecture.identifier}\\helm""")
-        assertThat(result.output).containsPattern("""kubectl - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\kubectl\\${currentOS.identifier}\\${currentArchitecture.identifier}\\1\.27\.3\\kubectl""")
+        val s = "\\" + File.separator
+        assertThat(result.output).containsPattern("""helm - .*build${s}tmp${s}test${s}work${s}\.gradle-test-kit${s}executablefetcher${s}helm${s}${currentOS.identifier}${s}${currentArchitecture.identifier}${s}3\.12\.0${s}${currentOS.identifier}-${currentArchitecture.identifier}${s}helm""")
+        assertThat(result.output).containsPattern("""kubectl - .*build${s}tmp${s}test${s}work${s}\.gradle-test-kit${s}executablefetcher${s}kubectl${s}${currentOS.identifier}${s}${currentArchitecture.identifier}${s}1\.27\.3${s}kubectl""")
     }
 
     @Test
@@ -57,14 +58,15 @@ class ExecutableFetcherTest {
             )
         }
 
-        val result = testProjectDir.executeGradle("listExecutables", "--rerun-tasks", "--info")
+        val result = testProjectDir.executeGradle("listExecutables", "--info")
 
         assertThat(result.task(":listExecutables")!!.outcome).isIn(
             TaskOutcome.SUCCESS,
         )
         assertThat(result.output).containsIgnoringWhitespaces("The following executables are registered:")
-        assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\${currentOS.identifier}\\${currentArchitecture.identifier}\\3\.12\.0\\${currentOS.identifier}-${currentArchitecture.identifier}\\helm""")
-        assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\${currentOS.identifier}\\${currentArchitecture.identifier}\\3\.11\.3\\${currentOS.identifier}-${currentArchitecture.identifier}\\helm""")
+        val s = "\\" + File.separator
+        assertThat(result.output).containsPattern("""helm - .*build${s}tmp${s}test${s}work${s}\.gradle-test-kit${s}executablefetcher${s}helm${s}${currentOS.identifier}${s}${currentArchitecture.identifier}${s}3\.12\.0${s}${currentOS.identifier}-${currentArchitecture.identifier}${s}helm""")
+        assertThat(result.output).containsPattern("""helm - .*build${s}tmp${s}test${s}work${s}\.gradle-test-kit${s}executablefetcher${s}helm${s}${currentOS.identifier}${s}${currentArchitecture.identifier}${s}3\.11\.3${s}${currentOS.identifier}-${currentArchitecture.identifier}${s}helm""")
     }
 
     @Test
