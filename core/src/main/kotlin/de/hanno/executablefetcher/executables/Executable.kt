@@ -2,6 +2,7 @@ package de.hanno.executablefetcher.executables
 
 import de.hanno.executablefetcher.arch.identifier
 import de.hanno.executablefetcher.download.download
+import de.hanno.executablefetcher.os.OperatingSystem
 import de.hanno.executablefetcher.variant.Variant
 import de.hanno.executablefetcher.zip.extractZipFile
 import de.hanno.executablefetcher.os.identifier
@@ -10,7 +11,7 @@ import java.net.URL
 
 interface Executable {
     val name: String
-    val fileName: String
+    fun getFileName(operatingSystem: OperatingSystem): String
     fun resolveDownloadUrl(variant: Variant): URL
     fun processDownload(downloadedFile: File, versionFolder: File) {
         if(downloadedFile.extension == "zip") {
@@ -48,7 +49,7 @@ interface Executable {
     fun resolveExecutableFile(
         parentFolder: File,
         variant: Variant,
-    ): File = resolveVersionFolder(parentFolder, variant).resolve(fileName)
+    ): File = resolveVersionFolder(parentFolder, variant).resolve(getFileName(variant.operatingSystem))
 
     fun resolveVersionFolder(
         parentFolder: File,

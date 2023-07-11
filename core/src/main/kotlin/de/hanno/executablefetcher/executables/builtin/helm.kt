@@ -2,6 +2,7 @@ package de.hanno.executablefetcher.executables.builtin
 
 import de.hanno.executablefetcher.arch.identifier
 import de.hanno.executablefetcher.executables.Executable
+import de.hanno.executablefetcher.os.OperatingSystem
 import de.hanno.executablefetcher.template.expand
 import de.hanno.executablefetcher.variant.Variant
 import de.hanno.executablefetcher.os.identifier
@@ -9,7 +10,12 @@ import java.io.File
 
 object helm : Executable {
     override val name = "helm"
-    override val fileName = "helm.exe"
+    override fun getFileName(operatingSystem: OperatingSystem) = when(operatingSystem) {
+        OperatingSystem.Linux -> "helm"
+        OperatingSystem.Mac -> "helm"
+        OperatingSystem.Windows -> "helm.exe"
+        is OperatingSystem.Unknown -> "helm"
+    }
 
     val defaultVersion = "3.12.0"
 
@@ -26,5 +32,5 @@ object helm : Executable {
         variant: Variant,
     ): File = resolveVersionFolder(parentFolder, variant)
         .resolve("${variant.operatingSystem.identifier}-${variant.architecture.identifier}")
-        .resolve(fileName)
+        .resolve(getFileName(variant.operatingSystem))
 }
