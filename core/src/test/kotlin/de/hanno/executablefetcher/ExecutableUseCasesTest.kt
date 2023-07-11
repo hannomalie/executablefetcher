@@ -1,11 +1,15 @@
 package de.hanno.executablefetcher
 
+import de.hanno.executablefetcher.arch.currentArchitecture
+import de.hanno.executablefetcher.arch.identifier
 import de.hanno.executablefetcher.arch.toArchitecture
 import de.hanno.executablefetcher.executables.AlreadyCached
 import de.hanno.executablefetcher.executables.Downloaded
 import de.hanno.executablefetcher.executables.builtin.helm
 import de.hanno.executablefetcher.variant.Variant
 import de.hanno.executablefetcher.os.OperatingSystem.Windows
+import de.hanno.executablefetcher.os.currentOS
+import de.hanno.executablefetcher.os.identifier
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -24,7 +28,8 @@ class ExecutableUseCasesTest {
     fun `builtin helm resolves version folder properly`(@TempDir parentFolder: File) {
         val executableFolder = helm.resolveExecutableFile(parentFolder, variant).parentFile
         val relativePathToVersionFolder = executableFolder.absolutePath.replaceFirst(parentFolder.absolutePath, "")
-        Assertions.assertThat(relativePathToVersionFolder).isEqualTo("""\helm\windows\amd64\1.2.3\windows-amd64""")
+        Assertions.assertThat(relativePathToVersionFolder)
+            .isEqualTo("""\helm\${currentOS.identifier}\${currentArchitecture.identifier}\1.2.3\${currentOS.identifier}-${currentArchitecture.identifier}""")
     }
 
     @Test

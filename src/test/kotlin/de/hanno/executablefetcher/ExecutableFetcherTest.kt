@@ -1,5 +1,9 @@
 package de.hanno.executablefetcher
 
+import de.hanno.executablefetcher.arch.currentArchitecture
+import de.hanno.executablefetcher.arch.identifier
+import de.hanno.executablefetcher.os.currentOS
+import de.hanno.executablefetcher.os.identifier
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
@@ -32,8 +36,8 @@ class ExecutableFetcherTest {
             TaskOutcome.SUCCESS,
         )
         assertThat(result.output).containsIgnoringWhitespaces("The following executables are registered:")
-        assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\windows\\amd64\\3\.12\.0\\windows-amd64\\helm\.exe""")
-        assertThat(result.output).containsPattern("""kubectl - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\kubectl\\windows\\amd64\\1\.27\.3\\kubectl\.exe""")
+        assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\${currentOS.identifier}\\${currentArchitecture.identifier}\\3\.12\.0\\${currentOS.identifier}-${currentArchitecture.identifier}\\helm""")
+        assertThat(result.output).containsPattern("""kubectl - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\kubectl\\${currentOS.identifier}\\${currentArchitecture.identifier}\\1\.27\.3\\kubectl""")
     }
 
     @Test
@@ -59,8 +63,8 @@ class ExecutableFetcherTest {
             TaskOutcome.SUCCESS,
         )
         assertThat(result.output).containsIgnoringWhitespaces("The following executables are registered:")
-        assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\windows\\amd64\\3\.12\.0\\windows-amd64\\helm\.exe""")
-        assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\windows\\amd64\\3\.11\.3\\windows-amd64\\helm\.exe""")
+        assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\${currentOS.identifier}\\${currentArchitecture.identifier}\\3\.12\.0\\${currentOS.identifier}-${currentArchitecture.identifier}\\helm""")
+        assertThat(result.output).containsPattern("""helm - .*build\\tmp\\test\\work\\\.gradle-test-kit\\executablefetcher\\helm\\${currentOS.identifier}\\${currentArchitecture.identifier}\\3\.11\.3\\${currentOS.identifier}-${currentArchitecture.identifier}\\helm""")
     }
 
     @Test
