@@ -19,7 +19,7 @@ import java.io.File
 class ExecutableUseCasesTest {
 
     private val variant = Variant(
-        operatingSystem = Windows,
+        operatingSystem = currentOS,
         architecture = "amd64".toArchitecture(),
         version = "1.2.3",
     )
