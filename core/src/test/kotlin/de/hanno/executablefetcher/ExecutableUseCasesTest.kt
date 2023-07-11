@@ -28,8 +28,9 @@ class ExecutableUseCasesTest {
     fun `builtin helm resolves version folder properly`(@TempDir parentFolder: File) {
         val executableFolder = helm.resolveExecutableFile(parentFolder, variant).parentFile
         val relativePathToVersionFolder = executableFolder.absolutePath.replaceFirst(parentFolder.absolutePath, "")
+        val s = File.separator
         Assertions.assertThat(relativePathToVersionFolder)
-            .isEqualTo("""\helm\${currentOS.identifier}\${currentArchitecture.identifier}\1.2.3\${currentOS.identifier}-${currentArchitecture.identifier}""")
+            .isEqualTo("""${s}helm${s}${currentOS.identifier}${s}${currentArchitecture.identifier}${s}1.2.3${s}${currentOS.identifier}-${currentArchitecture.identifier}""")
     }
 
     @Test

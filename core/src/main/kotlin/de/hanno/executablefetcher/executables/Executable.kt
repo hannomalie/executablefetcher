@@ -13,10 +13,12 @@ interface Executable {
     val name: String
     fun getFileName(operatingSystem: OperatingSystem): String
     fun resolveDownloadUrl(variant: Variant): URL
-    fun processDownload(downloadedFile: File, versionFolder: File) {
+    fun processDownload(downloadedFile: File, versionFolder: File, parentFolder: File, variant: Variant) {
         if(downloadedFile.extension == "zip") {
             downloadedFile.extractZipFile(versionFolder)
         }
+        val executableFile = resolveExecutableFile(parentFolder, variant)
+        executableFile.setExecutable(true)
     }
 
     fun downloadAndProcess(parentFolder: File, variant: Variant): DownloadResult {
@@ -24,7 +26,7 @@ interface Executable {
         val downloadedFile = download(parentFolder, versionFolder, variant)
         when(downloadedFile) {
             AlreadyCached -> {}
-            is Downloaded -> processDownload(downloadedFile.file, versionFolder)
+            is Downloaded -> processDownload(downloadedFile.file, versionFolder, parentFolder, variant)
             is NotFound -> {}
         }
         return downloadedFile
