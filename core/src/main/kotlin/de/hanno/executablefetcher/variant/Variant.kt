@@ -1,4 +1,4 @@
-package de.hanno.executablefetcher.core.variant
+package de.hanno.executablefetcher.variant
 
 import de.hanno.executablefetcher.arch.Architecture
 import de.hanno.executablefetcher.os.OperatingSystem

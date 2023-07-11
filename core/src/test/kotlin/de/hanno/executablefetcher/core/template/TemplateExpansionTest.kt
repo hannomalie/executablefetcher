@@ -2,6 +2,7 @@ package de.hanno.executablefetcher.core.template
 
 import de.hanno.executablefetcher.arch.toArchitecture
 import de.hanno.executablefetcher.os.OperatingSystem.Windows
+import de.hanno.executablefetcher.template.expand
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.net.URL

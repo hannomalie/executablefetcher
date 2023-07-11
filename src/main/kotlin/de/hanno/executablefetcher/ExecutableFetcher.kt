@@ -1,13 +1,13 @@
 package de.hanno.executablefetcher
 
 import de.hanno.executablefetcher.arch.currentArchitecture
-import de.hanno.executablefetcher.core.executables.AlreadyCached
-import de.hanno.executablefetcher.core.executables.Downloaded
-import de.hanno.executablefetcher.core.executables.Executable
-import de.hanno.executablefetcher.core.executables.NotFound
-import de.hanno.executablefetcher.core.executables.builtin.helm
-import de.hanno.executablefetcher.core.executables.builtin.kubectl
-import de.hanno.executablefetcher.core.variant.Variant
+import de.hanno.executablefetcher.executables.AlreadyCached
+import de.hanno.executablefetcher.executables.Downloaded
+import de.hanno.executablefetcher.executables.Executable
+import de.hanno.executablefetcher.executables.NotFound
+import de.hanno.executablefetcher.executables.builtin.helm
+import de.hanno.executablefetcher.executables.builtin.kubectl
+import de.hanno.executablefetcher.variant.Variant
 import de.hanno.executablefetcher.os.currentOS
 import org.gradle.api.*
 import org.gradle.api.invocation.Gradle

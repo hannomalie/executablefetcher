@@ -1,4 +1,4 @@
-package de.hanno.executablefetcher.core.zip
+package de.hanno.executablefetcher.zip
 
 import java.io.File
 import java.util.zip.ZipFile

@@ -1,4 +1,4 @@
-package de.hanno.executablefetcher.core.download
+package de.hanno.executablefetcher.download
 
 import java.io.File
 import java.net.HttpURLConnection

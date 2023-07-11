@@ -1,8 +1,8 @@
 package de.hanno.executablefetcher.core
 
 import de.hanno.executablefetcher.arch.toArchitecture
-import de.hanno.executablefetcher.core.executables.Executable
-import de.hanno.executablefetcher.core.variant.Variant
+import de.hanno.executablefetcher.executables.Executable
+import de.hanno.executablefetcher.variant.Variant
 import de.hanno.executablefetcher.os.OperatingSystem
 import org.assertj.core.api.Assertions
 import java.io.File

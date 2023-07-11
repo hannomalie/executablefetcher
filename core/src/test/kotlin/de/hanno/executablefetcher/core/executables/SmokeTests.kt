@@ -2,8 +2,9 @@ package de.hanno.executablefetcher.core.executables
 
 import de.hanno.executablefetcher.arch.toArchitecture
 import de.hanno.executablefetcher.core.executables.builtin.helm
-import de.hanno.executablefetcher.core.executables.builtin.kubectl
-import de.hanno.executablefetcher.core.variant.Variant
+import de.hanno.executablefetcher.executables.builtin.kubectl
+import de.hanno.executablefetcher.variant.Variant
+import de.hanno.executablefetcher.executables.Downloaded
 import de.hanno.executablefetcher.os.OperatingSystem.Windows
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest

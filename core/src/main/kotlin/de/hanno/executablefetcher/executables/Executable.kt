@@ -1,9 +1,9 @@
-package de.hanno.executablefetcher.core.executables
+package de.hanno.executablefetcher.executables
 
 import de.hanno.executablefetcher.arch.identifier
-import de.hanno.executablefetcher.core.download.download
-import de.hanno.executablefetcher.core.variant.Variant
-import de.hanno.executablefetcher.core.zip.extractZipFile
+import de.hanno.executablefetcher.download.download
+import de.hanno.executablefetcher.variant.Variant
+import de.hanno.executablefetcher.zip.extractZipFile
 import de.hanno.executablefetcher.os.identifier
 import java.io.File
 import java.net.URL
