@@ -11,7 +11,7 @@ plugins {
 }
 
 executableFetcher {
-    registerExecutable(de.hanno.executablefetcher.core.executables.builtin.helm, "3.11.3")
+    registerExecutable(de.hanno.executablefetcher.executables.builtin.helm, "3.11.3")
 }
 
 [...]

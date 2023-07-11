@@ -1,11 +1,10 @@
-package de.hanno.executablefetcher.core.executables
+package de.hanno.executablefetcher.executables
 
 import de.hanno.executablefetcher.arch.toArchitecture
-import de.hanno.executablefetcher.core.executables.builtin.helm
+import de.hanno.executablefetcher.executables.builtin.helm
 import de.hanno.executablefetcher.executables.builtin.kubectl
-import de.hanno.executablefetcher.variant.Variant
-import de.hanno.executablefetcher.executables.Downloaded
 import de.hanno.executablefetcher.os.OperatingSystem.Windows
+import de.hanno.executablefetcher.variant.Variant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest

@@ -1,4 +1,4 @@
-package de.hanno.executablefetcher.core.template
+package de.hanno.executablefetcher.template
 
 import de.hanno.executablefetcher.arch.toArchitecture
 import de.hanno.executablefetcher.os.OperatingSystem.Windows

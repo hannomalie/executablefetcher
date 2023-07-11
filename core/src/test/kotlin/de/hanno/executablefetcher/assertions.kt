@@ -1,4 +1,4 @@
-package de.hanno.executablefetcher.core
+package de.hanno.executablefetcher
 
 import de.hanno.executablefetcher.arch.toArchitecture
 import de.hanno.executablefetcher.executables.Executable

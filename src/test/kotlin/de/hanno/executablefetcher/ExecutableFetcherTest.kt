@@ -47,7 +47,7 @@ class ExecutableFetcherTest {
                         id("de.hanno.executablefetcher")
                     }
                     extensions.getByType(de.hanno.executablefetcher.ExecutableFetcherExtension::class.java).apply {
-                        registerExecutable(de.hanno.executablefetcher.core.executables.builtin.helm, "3.11.3")    
+                        registerExecutable(de.hanno.executablefetcher.executables.builtin.helm, "3.11.3")    
                     }
                 """.trimIndent()
             )
@@ -75,7 +75,7 @@ class ExecutableFetcherTest {
                     id("de.hanno.executablefetcher")
                 }
                 executableFetcher {
-                    registerExecutable(de.hanno.executablefetcher.core.executables.builtin.helm, "3.11.3")
+                    registerExecutable(de.hanno.executablefetcher.executables.builtin.helm, "3.11.3")
                 }
                 tasks.named("executeHelm", de.hanno.executablefetcher.ExecuteTask::class.java) {
                     args = "version"
