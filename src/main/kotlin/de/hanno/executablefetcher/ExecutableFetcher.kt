@@ -20,11 +20,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.configurationcache.extensions.capitalized
-import java.io.BufferedReader
 import java.io.File
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.util.concurrent.CompletableFuture
 
 
 class ExecutableFetcher: Plugin<Project> {
@@ -181,10 +177,17 @@ fun actualExecute(
 
     val file = executable.resolveExecutableFile(resultingParentFolder, variant)
 
-    project.logger.info("Executing bash -c '${file.absolutePath} ${args}'")
+    project.logger.info("Executing '${file.absolutePath} ${args}'")
 //  TODO: https://github.com/hannomalie/executablefetcher/issues/3
 //    val process = ProcessBuilder().command(listOf(file.absolutePath, args)).inheritIO().start()
     val process = Runtime.getRuntime().exec(arrayOf(file.absolutePath, args))
+    process.inputStream.use {
+        println(String(it.readBytes()))
+    }
+    val errorString = String(process.errorStream.readBytes())
+    if(errorString.isNotEmpty()) {
+        project.logger.error(errorString)
+    }
 
     val result = process.waitFor()
     project.logger.info("Executed with exit code $result")
