@@ -74,8 +74,10 @@ tasks.named("executeHelm", de.hanno.executablefetcher.ExecuteTask::class.java) {
   your own implementation of an executable. You only need to provide some names and implement 
   `fun resolveDownloadUrl(variant: Variant): URL` and benefit from some more or less cool interfaces and types, 
   automatic downloading, automatic caching etc :)
-* _No dependencies_: This plugin has no runtime library dependencies. That means you won't run into any dependency
-  conflicts on your gradle build classpath (as long as Kotlin's std library remains backwards compatible :P)
+* _Minimal dependencies_: This plugin has only a single runtime library dependency - commons compression.
+  That means you won't run into dependency conflicts on your gradle build classpath 
+  (as long as Kotlin's std library remains backwards compatible :P) and if you do, commons compression can be expected
+  to be solid and backwards compatible.
 
 ## Rationale
 

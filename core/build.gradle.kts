@@ -11,6 +11,8 @@ kotlin {
 }
 
 dependencies {
+    implementation("org.apache.commons:commons-compress:1.20")
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testImplementation(kotlin("test"))
     testImplementation("org.assertj:assertj-core:3.24.2")

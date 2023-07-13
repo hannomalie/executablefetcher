@@ -178,7 +178,7 @@ fun actualExecute(
     val file = executable.resolveExecutableFile(resultingParentFolder, variant)
 
     project.logger.info("Executing '${file.absolutePath} ${args}'")
-//  TODO: https://github.com/hannomalie/executablefetcher/issues/3
+//    TODO: https://github.com/hannomalie/executablefetcher/issues/3
 //    val process = ProcessBuilder().command(listOf(file.absolutePath, args)).inheritIO().start()
     val process = Runtime.getRuntime().exec(arrayOf(file.absolutePath, args))
     process.inputStream.use {
