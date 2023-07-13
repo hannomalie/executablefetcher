@@ -1,9 +1,11 @@
 package de.hanno.executablefetcher.executables
 
+import de.hanno.executablefetcher.arch.currentArchitecture
 import de.hanno.executablefetcher.arch.toArchitecture
 import de.hanno.executablefetcher.executables.builtin.helm
 import de.hanno.executablefetcher.executables.builtin.kubectl
 import de.hanno.executablefetcher.executables.builtin.kubectx
+import de.hanno.executablefetcher.executables.builtin.kubens
 import de.hanno.executablefetcher.os.OperatingSystem
 import de.hanno.executablefetcher.os.currentOS
 import de.hanno.executablefetcher.variant.Variant
@@ -19,9 +21,10 @@ class SmokeTests {
     @TestFactory
     fun `executable file is resolved and executable`(@TempDir tempDir: File): List<DynamicTest> {
         return listOf(
-            Pair(helm, Variant(currentOS, "amd64".toArchitecture(), helm.defaultVersion)),
-            Pair(kubectl, Variant(currentOS, "amd64".toArchitecture(), kubectl.defaultVersion)),
-            Pair(kubectx, Variant(currentOS, "amd64".toArchitecture(), kubectx.defaultVersion)),
+            Pair(helm, Variant(currentOS, currentArchitecture, helm.defaultVersion)),
+            Pair(kubectl, Variant(currentOS, currentArchitecture, kubectl.defaultVersion)),
+            Pair(kubectx, Variant(currentOS, currentArchitecture, kubectx.defaultVersion)),
+            Pair(kubens, Variant(currentOS, currentArchitecture, kubens.defaultVersion)),
         ).map { (executable, variant) ->
             dynamicTest("for ${executable.name}") {
                 assertThat(executable.downloadAndProcess(tempDir, variant)).isInstanceOf(Downloaded::class.java)

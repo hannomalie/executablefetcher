@@ -26,14 +26,14 @@ object kubectx: Executable {
         URL("https://github.com/ahmetb/kubectx/releases/download/v${version}/kubectx_v${version}_${operatingSystem.customIdentifier}_${architecture.customIdentifier}.${operatingSystem.customExtension}")
     }
 
-    private val OperatingSystem.customIdentifier: String get() = if(this is OperatingSystem.Mac) "darwin" else identifier
-    private val Architecture.customIdentifier: String get() = when(this) {
+    val OperatingSystem.customIdentifier: String get() = if(this is OperatingSystem.Mac) "darwin" else identifier
+    val Architecture.customIdentifier: String get() = when(this) {
         Architecture.arm_64 -> "arm64"
         Architecture.x86_64 -> "x86_64"
         else -> identifier
     }
 
-    private val OperatingSystem.customExtension: String get() = when(this) {
+    val OperatingSystem.customExtension: String get() = when(this) {
         OperatingSystem.Linux -> "tar.gz"
         OperatingSystem.Mac -> "tar.gz"
         OperatingSystem.Windows -> "zip"
