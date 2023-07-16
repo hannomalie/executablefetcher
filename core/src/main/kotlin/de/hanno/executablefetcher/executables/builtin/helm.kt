@@ -8,16 +8,9 @@ import de.hanno.executablefetcher.variant.Variant
 import de.hanno.executablefetcher.os.identifier
 import java.io.File
 
-object helm : Executable {
+object helm : Executable, BuiltIn {
     override val name = "helm"
-    override fun getFileName(operatingSystem: OperatingSystem) = when(operatingSystem) {
-        OperatingSystem.Linux -> "helm"
-        OperatingSystem.Mac -> "helm"
-        OperatingSystem.Windows -> "helm.exe"
-        is OperatingSystem.Unknown -> "helm"
-    }
-
-    val defaultVersion = "3.12.0"
+    override val defaultVersion = "3.12.0"
 
     override fun resolveDownloadUrl(
         variant: Variant

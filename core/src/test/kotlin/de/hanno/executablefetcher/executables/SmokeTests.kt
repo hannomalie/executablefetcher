@@ -21,11 +21,12 @@ class SmokeTests {
     @TestFactory
     fun `executable file is resolved and executable`(@TempDir tempDir: File): List<DynamicTest> {
         return listOf(
-            Pair(helm, Variant(currentOS, currentArchitecture, helm.defaultVersion)),
-            Pair(kubectl, Variant(currentOS, currentArchitecture, kubectl.defaultVersion)),
-            Pair(kubectx, Variant(currentOS, currentArchitecture, kubectx.defaultVersion)),
-            Pair(kubens, Variant(currentOS, currentArchitecture, kubens.defaultVersion)),
-        ).map { (executable, variant) ->
+            helm,
+            kubectl,
+            kubectx,
+            kubens,
+        ).map { executable ->
+            val variant = Variant(currentOS, currentArchitecture, executable.defaultVersion)
             dynamicTest("for ${executable.name}") {
                 assertThat(executable.downloadAndProcess(tempDir, variant)).isInstanceOf(Downloaded::class.java)
                 assertThat(executable.resolveExecutableFile(tempDir, variant)).isExecutable()

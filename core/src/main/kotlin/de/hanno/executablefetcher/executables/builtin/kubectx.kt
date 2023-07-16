@@ -9,16 +9,9 @@ import de.hanno.executablefetcher.template.expand
 import de.hanno.executablefetcher.variant.Variant
 import java.net.URL
 
-object kubectx: Executable {
+object kubectx: Executable, BuiltIn {
     override val name = "kubectx"
-    override fun getFileName(operatingSystem: OperatingSystem) = when(operatingSystem) {
-        OperatingSystem.Linux -> "kubectx"
-        OperatingSystem.Mac -> "kubectx"
-        OperatingSystem.Windows -> "kubectx.exe"
-        is OperatingSystem.Unknown -> "kubectx"
-    }
-
-    val defaultVersion = "0.9.4"
+    override val defaultVersion = "0.9.4"
 
     override fun resolveDownloadUrl(
         variant: Variant

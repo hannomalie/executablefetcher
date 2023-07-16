@@ -20,7 +20,13 @@ import java.nio.file.StandardCopyOption
 
 interface Executable {
     val name: String
-    fun getFileName(operatingSystem: OperatingSystem): String
+    fun getFileName(operatingSystem: OperatingSystem): String = when(operatingSystem) {
+        OperatingSystem.Linux -> name
+        OperatingSystem.Mac -> name
+        OperatingSystem.Windows -> "$name.exe"
+        is OperatingSystem.Unknown -> name
+    }
+
     fun resolveDownloadUrl(variant: Variant): URL
     fun processDownload(downloadedFile: File, versionFolder: File, parentFolder: File, variant: Variant) {
         if(downloadedFile.extension == "zip") {
