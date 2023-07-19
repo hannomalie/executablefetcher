@@ -30,11 +30,16 @@ graal {
     outputName("executablefetcher")
     javaVersion("11")
 
-
-    // Workaround for vs distribution that isn't properly detected by plugin
-    val ghActionsVsVarsFile = File("""C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat""")
-    if (ghActionsVsVarsFile.exists()) {
-        windowsVsVarsPath(ghActionsVsVarsFile.absolutePath)
+    // Workaround for vs distributions that aren't properly detected by plugin
+    File("""C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64\vcvars64.bat""").let { localVcVarsFile ->
+        if (localVcVarsFile.exists()) {
+            windowsVsVarsPath(localVcVarsFile.absolutePath)
+        }
+    }
+    File("""C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat""").let { localVcVarsFile ->
+        if (localVcVarsFile.exists()) {
+            windowsVsVarsPath(localVcVarsFile.absolutePath)
+        }
     }
 }
 
