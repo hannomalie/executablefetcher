@@ -1,5 +1,5 @@
 rootProject.name = "consumer"
 
 pluginManagement {
-    includeBuild("../")
+    includeBuild("../gradleplugin")
 }

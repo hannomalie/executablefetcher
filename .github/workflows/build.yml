@@ -20,8 +20,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: Run build with Gradle Wrapper
+      - name: Run build
         run: ./gradlew build --info
+      - name: Run composite build using the plugin
+        run: ./consumer/gradlew listExecutables --info
       - name: Archive build reports
         uses: actions/upload-artifact@v3
         if: success() || failure()
