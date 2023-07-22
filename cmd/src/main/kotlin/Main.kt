@@ -26,8 +26,7 @@ class Checksum : Callable<Int> {
     var info = false
 
     override fun call(): Int {
-        // TODO: https://github.com/hannomalie/executablefetcher/issues/6 Add other executables or make a list in core
-        val executables = listOf(helm, kubectl)
+        val executables = de.hanno.executablefetcher.executables.builtin.BuiltIn.executables
 
         if (info) {
             executables.forEach { executable ->

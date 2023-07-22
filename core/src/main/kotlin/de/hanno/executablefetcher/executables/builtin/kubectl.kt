@@ -1,11 +1,9 @@
 package de.hanno.executablefetcher.executables.builtin
 
-import de.hanno.executablefetcher.executables.Executable
-import de.hanno.executablefetcher.os.OperatingSystem
 import de.hanno.executablefetcher.template.expand
 import de.hanno.executablefetcher.variant.Variant
 
-object kubectl: Executable, BuiltIn {
+object kubectl: BuiltIn {
     override val name = "kubectl"
     override val defaultVersion = "1.27.3"
 

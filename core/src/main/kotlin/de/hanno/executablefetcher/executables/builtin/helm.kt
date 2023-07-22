@@ -1,14 +1,12 @@
 package de.hanno.executablefetcher.executables.builtin
 
 import de.hanno.executablefetcher.arch.identifier
-import de.hanno.executablefetcher.executables.Executable
-import de.hanno.executablefetcher.os.OperatingSystem
+import de.hanno.executablefetcher.os.identifier
 import de.hanno.executablefetcher.template.expand
 import de.hanno.executablefetcher.variant.Variant
-import de.hanno.executablefetcher.os.identifier
 import java.io.File
 
-object helm : Executable, BuiltIn {
+object helm : BuiltIn {
     override val name = "helm"
     override val defaultVersion = "3.12.0"
 

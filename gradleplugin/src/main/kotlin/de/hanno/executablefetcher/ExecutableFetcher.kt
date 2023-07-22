@@ -5,6 +5,7 @@ import de.hanno.executablefetcher.executables.AlreadyCached
 import de.hanno.executablefetcher.executables.Downloaded
 import de.hanno.executablefetcher.executables.Executable
 import de.hanno.executablefetcher.executables.NotFound
+import de.hanno.executablefetcher.executables.builtin.BuiltIn
 import de.hanno.executablefetcher.executables.builtin.helm
 import de.hanno.executablefetcher.executables.builtin.kubectl
 import de.hanno.executablefetcher.os.currentOS
@@ -200,12 +201,10 @@ data class ExecutableConfig(val name: String, val version: String, val parentFol
 open class ExecutableFetcherExtension(private val gradle: Gradle) {
     var parentFolder = gradle.gradleUserHomeDir.resolve("executablefetcher")
 
-    // TODO: https://github.com/hannomalie/executablefetcher/issues/6 Add other executables or make a list in core
     private val _executables: MutableMap<ExecutableConfig, Executable> by lazy {
-        mutableMapOf(
-            ExecutableConfig(helm.name, helm.defaultVersion, parentFolder) to helm,
-            ExecutableConfig(kubectl.name, kubectl.defaultVersion, parentFolder) to kubectl,
-        )
+        BuiltIn.executables.associate {
+            ExecutableConfig(it.name, it.defaultVersion, parentFolder) to it
+        }.toMutableMap()
     }
     val executables: Map<ExecutableConfig, Executable> by ::_executables
 

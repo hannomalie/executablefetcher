@@ -2,14 +2,12 @@ package de.hanno.executablefetcher.executables.builtin
 
 import de.hanno.executablefetcher.arch.Architecture
 import de.hanno.executablefetcher.arch.identifier
-import de.hanno.executablefetcher.executables.Executable
 import de.hanno.executablefetcher.os.OperatingSystem
 import de.hanno.executablefetcher.os.identifier
-import de.hanno.executablefetcher.template.expand
 import de.hanno.executablefetcher.variant.Variant
 import java.net.URL
 
-object kubectx: Executable, BuiltIn {
+object kubectx: BuiltIn {
     override val name = "kubectx"
     override val defaultVersion = "0.9.4"
 

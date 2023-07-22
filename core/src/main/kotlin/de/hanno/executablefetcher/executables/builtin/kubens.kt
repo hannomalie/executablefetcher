@@ -1,13 +1,11 @@
 package de.hanno.executablefetcher.executables.builtin
 
-import de.hanno.executablefetcher.executables.Executable
 import de.hanno.executablefetcher.executables.builtin.kubectx.customExtension
 import de.hanno.executablefetcher.executables.builtin.kubectx.customIdentifier
-import de.hanno.executablefetcher.os.OperatingSystem
 import de.hanno.executablefetcher.variant.Variant
 import java.net.URL
 
-object kubens: Executable, BuiltIn {
+object kubens: BuiltIn {
     override val name = "kubens"
     override val defaultVersion = kubectx.defaultVersion
 
