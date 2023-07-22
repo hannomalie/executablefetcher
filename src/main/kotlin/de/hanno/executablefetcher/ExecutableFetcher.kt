@@ -200,6 +200,7 @@ data class ExecutableConfig(val name: String, val version: String, val parentFol
 open class ExecutableFetcherExtension(private val gradle: Gradle) {
     var parentFolder = gradle.gradleUserHomeDir.resolve("executablefetcher")
 
+    // TODO: https://github.com/hannomalie/executablefetcher/issues/6 Add other executables or make a list in core
     private val _executables: MutableMap<ExecutableConfig, Executable> by lazy {
         mutableMapOf(
             ExecutableConfig(helm.name, helm.defaultVersion, parentFolder) to helm,
