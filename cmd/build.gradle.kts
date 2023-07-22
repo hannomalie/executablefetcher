@@ -1,7 +1,7 @@
 plugins {
-    kotlin("jvm") version "1.8.0" // TODO: Move version to settings gradle file
-    id("kotlin-kapt")
-    id("com.palantir.graal") version "0.12.0"
+    kotlin("jvm")
+    kotlin("kapt")
+    id("com.palantir.graal")
 }
 kotlin {
     jvmToolchain(11)

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.8.0" // TODO: Move version to settings gradle file
+    kotlin("jvm")
 }
 
 repositories {
