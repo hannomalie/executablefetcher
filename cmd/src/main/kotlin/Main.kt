@@ -1,23 +1,21 @@
 package de.hanno.executablefetcher.cli
 
 import de.hanno.executablefetcher.arch.currentArchitecture
-import de.hanno.executablefetcher.executables.builtin.helm
-import de.hanno.executablefetcher.executables.builtin.kubectl
+import de.hanno.executablefetcher.executables.ExecutableConfig
 import de.hanno.executablefetcher.os.currentOS
 import de.hanno.executablefetcher.variant.Variant
+import de.hanno.executablefetcher.executables.builtin.BuiltIn
+import de.hanno.executablefetcher.executables.printExecutables
 import picocli.CommandLine
-import picocli.CommandLine.*
-
+import picocli.CommandLine.Command
+import picocli.CommandLine.Option
 import java.io.File
-import java.math.BigInteger
-import java.nio.file.Files
-import java.security.MessageDigest
 import java.util.concurrent.Callable
 import kotlin.system.exitProcess
 
 @Command(name = "listexecutables", mixinStandardHelpOptions = true, version = ["0.1"],
     description = ["Prints all available executables."])
-class Checksum : Callable<Int> {
+class ListExecutables : Callable<Int> {
 
     @Option(names = ["parentfolder"], description = ["The base dir to cache all executables."])
     var parentFolder: File = File(".")
@@ -26,22 +24,20 @@ class Checksum : Callable<Int> {
     var info = false
 
     override fun call(): Int {
-        val executables = de.hanno.executablefetcher.executables.builtin.BuiltIn.executables
+        val executables = BuiltIn.executables
 
-        if (info) {
-            executables.forEach { executable ->
-                val executableFile = executable.resolveExecutableFile(
+        System.out.printExecutables(
+            verbose = info,
+            executables = executables.associateBy { executable ->
+                ExecutableConfig(
                     parentFolder,
                     Variant(currentOS, currentArchitecture, executable.defaultVersion)
                 )
-                println("${executable.name} - $executableFile")
             }
-        } else {
-            println(executables.map { it.name }.distinct().joinToString(", "))
-        }
+        )
 
         return 0
     }
 }
 
-fun main(args: Array<String>) : Unit = exitProcess(CommandLine(Checksum()).execute(*args))
+fun main(args: Array<String>) : Unit = exitProcess(CommandLine(ListExecutables()).execute(*args))
