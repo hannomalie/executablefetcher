@@ -1,5 +1,6 @@
 package de.hanno.executablefetcher.tasks
 
+import de.hanno.executablefetcher.ExecutableFetcherExtension
 import de.hanno.executablefetcher.executables.printExecutables
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel

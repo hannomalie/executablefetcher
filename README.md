@@ -45,7 +45,7 @@ plugins {
     id("de.hanno.executablefetcher")
 }
 
-tasks.named("executeHelm", de.hanno.executablefetcher.ExecuteTask::class.java) {
+tasks.named("executeHelm", de.hanno.executablefetcher.tasks.ExecuteTask::class.java) {
     args = "version"
 }
 

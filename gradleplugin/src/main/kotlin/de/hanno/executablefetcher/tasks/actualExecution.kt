@@ -1,5 +1,6 @@
 package de.hanno.executablefetcher.tasks
 
+import de.hanno.executablefetcher.ExecutableFetcherExtension
 import de.hanno.executablefetcher.arch.currentArchitecture
 import de.hanno.executablefetcher.executables.*
 import de.hanno.executablefetcher.os.currentOS

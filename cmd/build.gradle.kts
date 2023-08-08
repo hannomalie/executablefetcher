@@ -41,6 +41,7 @@ graal {
             windowsVsVarsPath(localVcVarsFile.absolutePath)
         }
     }
+    option("-H:EnableURLProtocols=https")
 }
 
 tasks.test {
