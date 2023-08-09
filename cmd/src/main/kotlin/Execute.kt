@@ -51,27 +51,6 @@ class Execute : Callable<Int> {
             )
         )
 
-        val exitCode = when(val result = executable.downloadAndProcess(executableConfig)) {
-            AlreadyCached, is Downloaded -> {
-                val executableFile = executable.resolveExecutableFile(executableConfig)
-
-                val process = Runtime.getRuntime().exec(arrayOf(executableFile.absolutePath, args).filterNotNull().toTypedArray()).apply {
-                    inputStream.use {
-                        println(String(it.readBytes()))
-                    }
-                    val errorString = String(errorStream.readBytes())
-                    if (errorString.isNotEmpty()) {
-                        System.err.println(errorString)
-                    }
-                }
-
-                process.waitFor()
-            }
-            is NotFound -> throw IllegalArgumentException(
-                "Download for executable ${executable.name} not found on '${result.url}'!"
-            )
-        }
-
-        return exitCode
+        return executable.executeCareFree(executableConfig, args)
     }
 }

@@ -101,6 +101,38 @@ class ExecutableFetcherTest {
     }
 
     @Test
+    fun `executeHelm custom task prints errors`(@TempDir testProjectDir: File) {
+        testProjectDir.apply {
+            assertTrue(resolve("settings.gradle.kts").createNewFile())
+            resolve("build.gradle.kts").apply {
+                assertTrue(createNewFile())
+                writeText(
+                    """
+                plugins {
+                    id("de.hanno.executablefetcher")
+                }
+                executableFetcher {
+                    registerExecutable(de.hanno.executablefetcher.executables.builtin.helm, "3.11.3")
+                }
+                tasks.named("executeHelm", de.hanno.executablefetcher.tasks.ExecuteTask::class.java) {
+                    args = "asdasdasd"
+                    version = "3.11.3"
+                }
+            """.trimIndent()
+                )
+            }
+        }
+
+        val result = testProjectDir.executeGradle("executeHelm", expectFailure = true)
+
+        assertThat(result.task(":executeHelm")!!.outcome).isIn(
+            TaskOutcome.FAILED,
+        )
+        assertThat(result.output).containsIgnoringWhitespaces("""> Task :executeHelm FAILED""")
+        assertThat(result.output).containsIgnoringWhitespaces("""Error: unknown command "asdasdasd" for "helm"""")
+    }
+
+    @Test
     fun `global executable task prints helm version when used with helm parameter`(@TempDir testProjectDir: File) {
         testProjectDir.apply {
             assertTrue(resolve("settings.gradle.kts").createNewFile())
@@ -125,12 +157,19 @@ class ExecutableFetcherTest {
     }
 
     private fun File.executeGradle(
-        vararg arguments: String = arrayOf("listExecutables")
+        vararg arguments: String = arrayOf("listExecutables"),
+        expectFailure: Boolean = false
     ) = GradleRunner.create()
         .withProjectDir(this)
         .withArguments(*arguments)
         .withPluginClasspath()
-        .build()
+        .run {
+            if(expectFailure) {
+                buildAndFail()
+            } else {
+                build()
+            }
+        }
 }
 
 fun File.createSimpleProject() {

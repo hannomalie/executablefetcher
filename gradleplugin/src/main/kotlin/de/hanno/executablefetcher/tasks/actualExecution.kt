@@ -7,6 +7,7 @@ import de.hanno.executablefetcher.os.currentOS
 import de.hanno.executablefetcher.variant.Variant
 import org.gradle.api.Project
 import java.io.File
+import java.io.InputStream
 
 fun actualExecute(
     project: Project,
@@ -31,12 +32,15 @@ fun actualExecute(
     project.logger.info("Executing '${executableFile.absolutePath} ${args}'")
 //    TODO: https://github.com/hannomalie/executablefetcher/issues/3
 //    val process = ProcessBuilder().command(listOf(file.absolutePath, args)).inheritIO().start()
-    val process = Runtime.getRuntime().exec(arrayOf(executableFile.absolutePath, args))
-    process.handleOutput(project)
-
-    val result = process.waitFor()
+    val result = execute(executableFile, args) {errorStream ->
+        val errorString = String(errorStream.readBytes())
+        if(errorString.isNotEmpty()) {
+            project.logger.error(errorString)
+        }
+    }
     project.handleResult(result, executableFile, args)
 }
+
 
 private fun Project.handleResult(result: Int, file: File, args: String) {
     logger.info("Executed with exit code $result")
@@ -45,15 +49,6 @@ private fun Project.handleResult(result: Int, file: File, args: String) {
     }
 }
 
-private fun Process.handleOutput(project: Project) {
-    inputStream.use {
-        println(String(it.readBytes()))
-    }
-    val errorString = String(errorStream.readBytes())
-    if (errorString.isNotEmpty()) {
-        project.logger.error(errorString)
-    }
-}
 
 private fun Project.deriveFallbacks(
     executableName: String
