@@ -7,14 +7,15 @@ val defaultStandardOutHandler: (InputStream) -> Unit = { println(String(it.readB
 val defaultErrorOutHandler: (InputStream) -> Unit = {
     val errorString = String(it.readBytes())
     if(errorString.isNotEmpty()) {
-        System.err.println(String(it.readBytes()))
+        System.err.println(errorString)
     }
 }
 
-fun Executable.executeCareFree(config: ExecutableConfig,
-            args: String?,
-            standard: (InputStream) -> Unit = defaultStandardOutHandler,
-            error: (InputStream) -> Unit = defaultErrorOutHandler,
+fun Executable.executeCareFree(
+    config: ExecutableConfig,
+    args: String?,
+    standard: (InputStream) -> Unit = defaultStandardOutHandler,
+    error: (InputStream) -> Unit = defaultErrorOutHandler,
 ): Int = when(val result = downloadAndProcess(config)) {
     AlreadyCached, is Downloaded -> {
         val executableFile = resolveExecutableFile(config)

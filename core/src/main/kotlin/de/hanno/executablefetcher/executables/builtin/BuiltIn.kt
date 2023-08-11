@@ -10,6 +10,7 @@ interface BuiltIn: de.hanno.executablefetcher.executables.Executable {
                 kubectl,
                 kubectx,
                 kubens,
+                javaZulu,
             )
         }
     }
