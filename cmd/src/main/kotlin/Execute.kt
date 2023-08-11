@@ -48,7 +48,8 @@ class Execute : Callable<Int> {
                 currentOS,
                 currentArchitecture,
                 version ?: executable.defaultVersion
-            )
+            ),
+            DownloadStrategy.Normal
         )
 
         return executable.executeCareFree(executableConfig, args)

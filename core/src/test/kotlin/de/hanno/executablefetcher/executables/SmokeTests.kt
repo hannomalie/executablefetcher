@@ -1,7 +1,9 @@
 package de.hanno.executablefetcher.executables
 
+import de.hanno.executablefetcher.LocalServer
 import de.hanno.executablefetcher.arch.currentArchitecture
 import de.hanno.executablefetcher.arch.toArchitecture
+import de.hanno.executablefetcher.executables.DownloadStrategy.*
 import de.hanno.executablefetcher.executables.builtin.helm
 import de.hanno.executablefetcher.executables.builtin.kubectl
 import de.hanno.executablefetcher.executables.builtin.kubectx
@@ -10,14 +12,19 @@ import de.hanno.executablefetcher.os.OperatingSystem
 import de.hanno.executablefetcher.os.currentOS
 import de.hanno.executablefetcher.variant.Variant
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.DynamicTest
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.DynamicTest.dynamicTest
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
+val mockServerPort = 12345
+
 class SmokeTests {
+    // It's not nice to test against other's production systems, so only test
+    // against them manually on demand from time to time.
+    val useRealProductionSources = false
+    val downloadStrategy = if(useRealProductionSources) Normal else AlwaysLocalHost(mockServerPort)
+
     @TestFactory
     fun `executable file is resolved and executable`(@TempDir tempDir: File): List<DynamicTest> {
         return listOf(
@@ -28,7 +35,7 @@ class SmokeTests {
         ).map { executable ->
             val variant = Variant(currentOS, currentArchitecture, executable.defaultVersion)
             dynamicTest("for ${executable.name}") {
-                assertThat(executable.downloadAndProcess(tempDir, variant)).isInstanceOf(Downloaded::class.java)
+                assertThat(executable.downloadAndProcess(tempDir, variant, downloadStrategy)).isInstanceOf(Downloaded::class.java)
                 assertThat(executable.resolveExecutableFile(tempDir, variant)).isExecutable()
             }
         }
@@ -36,8 +43,8 @@ class SmokeTests {
 
     @Test
     fun `zip gets extracted`(@TempDir tempDir: File) {
-        val variant = Variant(OperatingSystem.Linux, "amd64".toArchitecture(), helm.defaultVersion)
-        val downloadResult = helm.downloadAndProcess(tempDir, variant)
+        val variant = Variant(OperatingSystem.Windows, "amd64".toArchitecture(), helm.defaultVersion)
+        val downloadResult = helm.downloadAndProcess(tempDir, variant, downloadStrategy)
         assertThat(downloadResult).isInstanceOf(Downloaded::class.java)
         downloadResult as Downloaded
         assertThat(downloadResult.file.extension).isEqualTo("zip")
@@ -51,7 +58,7 @@ class SmokeTests {
     @Test
     fun `tar gz gets decompressed`(@TempDir tempDir: File) {
         val variant = Variant(OperatingSystem.Linux, "amd64".toArchitecture(), kubectx.defaultVersion)
-        val downloadResult = kubectx.downloadAndProcess(tempDir, variant)
+        val downloadResult = kubectx.downloadAndProcess(tempDir, variant, downloadStrategy)
         assertThat(downloadResult).isInstanceOf(Downloaded::class.java)
         downloadResult as Downloaded
         assertThat(downloadResult.file.extension).isEqualTo("gz")
@@ -60,5 +67,21 @@ class SmokeTests {
         assertThat(executableFile).`as` {
             executableFile.parentFile.listFiles().joinToString { it.path }
         }.exists()
+    }
+
+    companion object {
+        lateinit var localServer: LocalServer
+
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll() {
+            localServer = LocalServer("src/test/resources/served_locally", mockServerPort)
+            localServer.run()
+        }
+        @JvmStatic
+        @AfterAll
+        fun afterAll() {
+            localServer.shutdown()
+        }
     }
 }

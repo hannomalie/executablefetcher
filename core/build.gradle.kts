@@ -19,4 +19,6 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.24.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
     testImplementation("io.github.classgraph:classgraph:4.8.161")
+
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.11.0")
 }

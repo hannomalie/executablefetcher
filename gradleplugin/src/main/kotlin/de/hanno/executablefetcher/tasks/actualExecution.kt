@@ -7,7 +7,6 @@ import de.hanno.executablefetcher.os.currentOS
 import de.hanno.executablefetcher.variant.Variant
 import org.gradle.api.Project
 import java.io.File
-import java.io.InputStream
 
 fun actualExecute(
     project: Project,
@@ -32,7 +31,7 @@ fun actualExecute(
     project.logger.info("Executing '${executableFile.absolutePath} ${args}'")
 //    TODO: https://github.com/hannomalie/executablefetcher/issues/3
 //    val process = ProcessBuilder().command(listOf(file.absolutePath, args)).inheritIO().start()
-    val result = execute(executableFile, args) {errorStream ->
+    val result = execute(executableFile, args) { errorStream ->
         val errorString = String(errorStream.readBytes())
         if(errorString.isNotEmpty()) {
             project.logger.error(errorString)
@@ -76,6 +75,7 @@ private fun deriveExecutableConfig(
             operatingSystem = currentOS,
             architecture = currentArchitecture,
             version = version ?: defaultVersion
-        )
+        ),
+        DownloadStrategy.Normal
     )
 }

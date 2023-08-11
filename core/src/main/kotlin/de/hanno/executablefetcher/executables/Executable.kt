@@ -2,13 +2,17 @@ package de.hanno.executablefetcher.executables
 
 import de.hanno.executablefetcher.arch.identifier
 import de.hanno.executablefetcher.download.download
+import de.hanno.executablefetcher.executables.DownloadStrategy.AlwaysLocalHost
 import de.hanno.executablefetcher.os.OperatingSystem
 import de.hanno.executablefetcher.os.OperatingSystem.*
 import de.hanno.executablefetcher.os.identifier
 import de.hanno.executablefetcher.variant.Variant
 import de.hanno.executablefetcher.zip.extractZipFile
 import java.io.File
+import java.net.URI
 import java.net.URL
+import java.util.*
+
 
 interface Executable {
     val name: String
@@ -33,12 +37,13 @@ interface Executable {
         executableFile.setExecutable(true)
     }
 
-    fun downloadAndProcess(parentFolder: File, variant: Variant): DownloadResult {
+    fun downloadAndProcess(parentFolder: File, variant: Variant, downloadStrategy: DownloadStrategy): DownloadResult {
         val versionFolder = resolveVersionFolder(parentFolder, variant)
         return download(
             parentFolder,
             versionFolder,
-            variant
+            variant,
+            downloadStrategy
         ).apply {
             when (this) {
                 AlreadyCached -> {}
@@ -52,10 +57,11 @@ interface Executable {
         parentFolder: File,
         versionFolder: File,
         variant: Variant,
+        downloadStrategy: DownloadStrategy,
     ): DownloadResult = if(resolveExecutableFile(parentFolder, variant).exists()) {
         AlreadyCached
     } else {
-        val url = resolveDownloadUrl(variant)
+        val url: URL = resolveDownloadUrl(variant).adjustAccordingToStrategy(downloadStrategy)
         val file = url.download(versionFolder)
         if(file == null) {
             NotFound(url)
@@ -79,7 +85,24 @@ interface Executable {
         .resolve(variant.version)
 }
 
-fun Executable.downloadAndProcess(config: ExecutableConfig) = downloadAndProcess(config.parentFolder, config.variant)
+fun Executable.downloadAndProcess(config: ExecutableConfig) = downloadAndProcess(config.parentFolder, config.variant, config.downloadStrategy)
 fun Executable.resolveExecutableFile(config: ExecutableConfig) = resolveExecutableFile(config.parentFolder, config.variant)
 
-data class ExecutableConfig(val parentFolder: File, val variant: Variant)
+data class ExecutableConfig(val parentFolder: File, val variant: Variant, val downloadStrategy: DownloadStrategy)
+
+sealed interface DownloadStrategy {
+    object Normal: DownloadStrategy
+    data class AlwaysLocalHost(val port: Int = 1234): DownloadStrategy
+}
+
+fun URL.adjustAccordingToStrategy(downloadStrategy: DownloadStrategy): URL = when(downloadStrategy) {
+    is AlwaysLocalHost -> {
+        val oldUri = URI(this.toString())
+        val newUri = URI(
+            "http", "localhost:1234",
+            oldUri.path, oldUri.query, oldUri.fragment
+        )
+        newUri.toURL()
+    }
+    DownloadStrategy.Normal -> this
+}

@@ -1,6 +1,7 @@
 package de.hanno.executablefetcher.cli
 
 import de.hanno.executablefetcher.arch.currentArchitecture
+import de.hanno.executablefetcher.executables.DownloadStrategy
 import de.hanno.executablefetcher.executables.ExecutableConfig
 import de.hanno.executablefetcher.executables.builtin.BuiltIn
 import de.hanno.executablefetcher.executables.printExecutables
@@ -28,7 +29,8 @@ class ListExecutables : Callable<Int> {
             executables = executables.associateBy { executable ->
                 ExecutableConfig(
                     parentFolder,
-                    Variant(currentOS, currentArchitecture, executable.defaultVersion)
+                    Variant(currentOS, currentArchitecture, executable.defaultVersion),
+                    DownloadStrategy.Normal
                 )
             }
         )
