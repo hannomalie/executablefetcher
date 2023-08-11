@@ -1,5 +1,9 @@
 package de.hanno.executablefetcher.executables
 
+import de.hanno.executablefetcher.arch.currentArchitecture
+import de.hanno.executablefetcher.executables.builtin.BuiltIn
+import de.hanno.executablefetcher.os.currentOS
+import de.hanno.executablefetcher.variant.Variant
 import java.io.File
 import java.io.InputStream
 
@@ -26,6 +30,14 @@ fun Executable.executeCareFree(
         -1
     }
 }
+
+fun BuiltIn.executeCareFree(
+    downloadStrategy: DownloadStrategy,
+    config: ExecutableConfig = ExecutableConfig(File("."), Variant(currentOS, currentArchitecture, defaultVersion), downloadStrategy),
+    args: String?,
+    standard: (InputStream) -> Unit = defaultStandardOutHandler,
+    error: (InputStream) -> Unit = defaultErrorOutHandler,
+): Int = executeCareFree(config, args, standard, error)
 
 fun execute(
     executableFile: File,
