@@ -40,15 +40,15 @@ class ExecutableUseCasesTest {
 
     @Test
     fun `builtin helm can be executed`(@TempDir parentFolder: File) {
-        helm.downloadAndProcess(parentFolder, variant.copy(version = "3.12.0"), DownloadStrategy.AlwaysLocalHost())
+        helm.downloadAndProcess(parentFolder, variant.copy(version = "3.12.0"), DownloadStrategy.AlwaysLocalHost(localServer.port))
         helm.assertVersionCommandCanBeExecuted(parentFolder, "3.12.0")
     }
 
     @Test
     fun `builtin helm can be executed in multiple versions`(@TempDir parentFolder: File) {
 
-        assertIs<Downloaded>(helm.downloadAndProcess(parentFolder, variant.copy(version = "3.12.0"), DownloadStrategy.AlwaysLocalHost()))
-        assertIs<Downloaded>(helm.downloadAndProcess(parentFolder, variant.copy(version = "3.11.3"), DownloadStrategy.AlwaysLocalHost()))
+        assertIs<Downloaded>(helm.downloadAndProcess(parentFolder, variant.copy(version = "3.12.0"), DownloadStrategy.AlwaysLocalHost(localServer.port)))
+        assertIs<Downloaded>(helm.downloadAndProcess(parentFolder, variant.copy(version = "3.11.3"), DownloadStrategy.AlwaysLocalHost(localServer.port)))
 
         helm.assertVersionCommandCanBeExecuted(parentFolder, "3.12.0")
         helm.assertVersionCommandCanBeExecuted(parentFolder, "3.11.3")
@@ -64,16 +64,35 @@ class ExecutableUseCasesTest {
                 architecture = "amd64".toArchitecture(),
                 version = "3.12.0",
             )
-            Assertions.assertThat(helm.downloadAndProcess(parentFolder, variant, DownloadStrategy.AlwaysLocalHost()))
+            Assertions.assertThat(helm.downloadAndProcess(parentFolder, variant, DownloadStrategy.AlwaysLocalHost(
+                localServer.port
+            )))
                 .isInstanceOf(Downloaded::class.java)
 
-            Assertions.assertThat(helm.downloadAndProcess(parentFolder, variant, DownloadStrategy.AlwaysLocalHost()))
+            Assertions.assertThat(helm.downloadAndProcess(parentFolder, variant, DownloadStrategy.AlwaysLocalHost(
+                localServer.port
+            )))
                 .isInstanceOf(AlreadyCached::class.java)
+        }
+        companion object {
+            private lateinit var localServer: LocalServer
+
+            @JvmStatic
+            @BeforeAll
+            fun beforeAll() {
+                localServer = LocalServer("src/test/resources/served_locally", 1236)
+                localServer.run()
+            }
+            @JvmStatic
+            @AfterAll
+            fun afterAll() {
+                localServer.shutdown()
+            }
         }
     }
 
     companion object {
-        lateinit var localServer: LocalServer
+        private lateinit var localServer: LocalServer
 
         @JvmStatic
         @BeforeAll

@@ -18,7 +18,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 
 // Translated from https://github.com/square/okhttp/blob/master/samples/static-server/src/main/java/okhttp3/sample/SampleServer.java
-class LocalServer(private val root: String, private val port: Int) :
+class LocalServer(private val root: String, val port: Int) :
     Dispatcher() {
     @Throws(IOException::class)
     fun run() {

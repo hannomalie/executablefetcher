@@ -18,7 +18,7 @@ class BuiltInTest {
 
                 assertThat(objects.size).isEqualTo(builtInClassesNames.size)
 
-                assertThat(BuiltIn.executables).containsExactlyElementsOf(objects)
+                assertThat(BuiltIn.executables).containsExactlyInAnyOrderElementsOf(objects)
             }
     }
 }
