@@ -99,7 +99,7 @@ fun URL.adjustAccordingToStrategy(downloadStrategy: DownloadStrategy): URL = whe
     is AlwaysLocalHost -> {
         val oldUri = URI(this.toString())
         val newUri = URI(
-            "http", "localhost:1234",
+            "http", "localhost:${downloadStrategy.port}",
             oldUri.path, oldUri.query, oldUri.fragment
         )
         newUri.toURL()

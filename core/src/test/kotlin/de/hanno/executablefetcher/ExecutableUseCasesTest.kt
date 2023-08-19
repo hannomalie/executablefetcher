@@ -16,6 +16,9 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledIf
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.assertIs
@@ -24,7 +27,7 @@ import kotlin.test.assertIs
 class ExecutableUseCasesTest {
 
     private val variant = Variant(
-        operatingSystem = currentOS,
+        operatingSystem = Windows,
         architecture = "amd64".toArchitecture(),
         version = "1.2.3",
     )
@@ -35,16 +38,18 @@ class ExecutableUseCasesTest {
         val relativePathToVersionFolder = executableFolder.absolutePath.replaceFirst(parentFolder.absolutePath, "")
         val s = File.separator
         Assertions.assertThat(relativePathToVersionFolder)
-            .isEqualTo("""${s}helm${s}${currentOS.identifier}${s}${currentArchitecture.identifier}${s}1.2.3${s}${currentOS.identifier}-${currentArchitecture.identifier}""")
+            .isEqualTo("""${s}helm${s}${Windows.identifier}${s}${currentArchitecture.identifier}${s}1.2.3${s}${Windows.identifier}-${currentArchitecture.identifier}""")
     }
 
     @Test
+    @EnabledOnOs(value = [OS.WINDOWS])
     fun `builtin helm can be executed`(@TempDir parentFolder: File) {
         helm.downloadAndProcess(parentFolder, variant.copy(version = "3.12.0"), DownloadStrategy.AlwaysLocalHost(localServer.port))
         helm.assertVersionCommandCanBeExecuted(parentFolder, "3.12.0")
     }
 
     @Test
+    @EnabledOnOs(value = [OS.WINDOWS])
     fun `builtin helm can be executed in multiple versions`(@TempDir parentFolder: File) {
 
         assertIs<Downloaded>(helm.downloadAndProcess(parentFolder, variant.copy(version = "3.12.0"), DownloadStrategy.AlwaysLocalHost(localServer.port)))
@@ -80,7 +85,7 @@ class ExecutableUseCasesTest {
             @JvmStatic
             @BeforeAll
             fun beforeAll() {
-                localServer = LocalServer("src/test/resources/served_locally", 1236)
+                localServer = LocalServer("src/test/resources/served_locally")
                 localServer.run()
             }
             @JvmStatic
@@ -97,7 +102,7 @@ class ExecutableUseCasesTest {
         @JvmStatic
         @BeforeAll
         fun beforeAll() {
-            localServer = LocalServer("src/test/resources/served_locally", 1234)
+            localServer = LocalServer("src/test/resources/served_locally")
             localServer.run()
         }
         @JvmStatic

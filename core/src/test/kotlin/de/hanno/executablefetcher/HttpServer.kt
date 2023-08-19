@@ -7,18 +7,12 @@ import okhttp3.mockwebserver.RecordedRequest
 import okio.Buffer
 import okio.source
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
-import java.security.GeneralSecurityException
-import java.security.KeyStore
-import java.security.SecureRandom
-import javax.net.ssl.KeyManagerFactory
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManagerFactory
+import kotlin.random.Random
 
 // Translated from https://github.com/square/okhttp/blob/master/samples/static-server/src/main/java/okhttp3/sample/SampleServer.java
-class LocalServer(private val root: String, val port: Int) :
+class LocalServer(private val root: String, val port: Int = Random.nextInt(9000, 9999)) :
     Dispatcher() {
     @Throws(IOException::class)
     fun run() {
@@ -91,37 +85,5 @@ class LocalServer(private val root: String, val port: Int) :
         if (path.endsWith(".tar.gz")) return "application/tar+gzip"
         if (path.endsWith(".html")) return "text/html; charset=utf-8"
         return if (path.endsWith(".txt")) "text/plain; charset=utf-8" else "application/octet-stream"
-    }
-
-    companion object {
-        @Throws(Exception::class)
-        @JvmStatic
-        fun main(args: Array<String>) {
-            if (args.size != 4) {
-                println("Usage: SampleServer <keystore> <password> <root file> <port>")
-                return
-            }
-            val root = args[2]
-            val port = args[3].toInt()
-            val server = LocalServer(root, port)
-            server.run()
-        }
-
-        @Throws(GeneralSecurityException::class, IOException::class)
-        private fun sslContext(keystoreFile: String, password: String): SSLContext {
-            val keystore = KeyStore.getInstance(KeyStore.getDefaultType())
-            FileInputStream(keystoreFile).use { `in` -> keystore.load(`in`, password.toCharArray()) }
-            val keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
-            keyManagerFactory.init(keystore, password.toCharArray())
-            val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-            trustManagerFactory.init(keystore)
-            val sslContext = SSLContext.getInstance("TLS")
-            sslContext.init(
-                keyManagerFactory.keyManagers,
-                trustManagerFactory.trustManagers,
-                SecureRandom()
-            )
-            return sslContext
-        }
     }
 }
